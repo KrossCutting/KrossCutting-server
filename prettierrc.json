@@ -2,6 +2,7 @@
   "arrowParens": "always",
   "bracketSpacing": true,
   "htmlWhitespaceSensitivity": "css",
+  "endOfLine": "lf",
   "insertPragma": false,
   "bracketSameLine": false,
   "jsxSingleQuote": false,
