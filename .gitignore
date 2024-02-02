@@ -1,2 +1,5 @@
-node_modules
 .env
+node_modules
+
+# Editor directories and files
+.DS_Store
