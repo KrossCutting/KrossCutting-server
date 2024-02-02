@@ -9,10 +9,9 @@ async function getMediaResources(title, url, s3Client, folder) {
   try {
     const videoInfo = await ytdl.getInfo(url);
 
-    const highQualityVideo = videoInfo.formats.find(
-      (format) =>
-        format.qualityLabel === "1080p" || format.qualityLabel === "720p",
-    );
+    const highQualityVideo =
+      videoInfo.formats.find((format) => format.qualityLabel === "1080p") ||
+      videoInfo.formats.find((format) => format.qualityLabel === "720p");
 
     if (!highQualityVideo) {
       throw new Error("lowQualityVideo");
