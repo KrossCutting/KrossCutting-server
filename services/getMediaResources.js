@@ -1,9 +1,5 @@
 const ytdl = require("ytdl-core");
 const { Upload } = require("@aws-sdk/lib-storage");
-const {
-  convertVideoFormat,
-  convertAudioFormat,
-} = require("./convertFileFormat");
 
 async function getMediaResources(title, url, s3Client, folder) {
   try {
@@ -22,20 +18,12 @@ async function getMediaResources(title, url, s3Client, folder) {
       filter: "audioonly",
     });
 
-    let audioFile = ytdl.downloadFromInfo(videoInfo, {
+    const audioFile = ytdl.downloadFromInfo(videoInfo, {
       format: audioFormatInfo,
     });
-    let videoFile = ytdl.downloadFromInfo(videoInfo, {
+    const videoFile = ytdl.downloadFromInfo(videoInfo, {
       format: highQualityVideo,
     });
-
-    if (highQualityVideo.container === "webm") {
-      videoFile = convertVideoFormat(videoFile);
-    }
-
-    if (audioFormatInfo.container === "webm") {
-      audioFile = convertAudioFormat(audioFile);
-    }
 
     const videoUpload = new Upload({
       client: s3Client,
@@ -45,7 +33,6 @@ async function getMediaResources(title, url, s3Client, folder) {
         Body: videoFile,
       },
     });
-
     const audioUpload = new Upload({
       client: s3Client,
       params: {
