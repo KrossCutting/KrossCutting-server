@@ -31,14 +31,17 @@ async function getMediaResources(title, url, s3Client, folder) {
         Bucket: process.env.AWS_BUCKET,
         Key: `${folder}/videos/${title}-original.mp4`,
         Body: videoFile,
+        ContentType: "video/mp4",
       },
     });
+
     const audioUpload = new Upload({
       client: s3Client,
       params: {
         Bucket: process.env.AWS_BUCKET,
         Key: `${folder}/audios/${title}-original.mp3`,
         Body: audioFile,
+        ContentType: "audio/mpeg",
       },
     });
 
