@@ -25,13 +25,16 @@ async function getMediaResources(title, url, s3Client, folder) {
       format: highQualityVideo,
     });
 
+    const videoContentType =
+      highQualityVideo.container === "mp4" ? "video/mp4" : "video/webm";
+
     const videoUpload = new Upload({
       client: s3Client,
       params: {
         Bucket: process.env.AWS_BUCKET,
         Key: `${folder}/videos/${title}-original.mp4`,
         Body: videoFile,
-        ContentType: "video/mp4",
+        ContentType: videoContentType,
       },
     });
 
