@@ -1,9 +1,5 @@
 const ytdl = require("ytdl-core");
 const { Upload } = require("@aws-sdk/lib-storage");
-const {
-  convertVideoFormat,
-  convertAudioFormat,
-} = require("./convertFileFormat");
 
 async function getMediaResources(title, url, s3Client, folder) {
   try {
@@ -22,36 +18,43 @@ async function getMediaResources(title, url, s3Client, folder) {
       filter: "audioonly",
     });
 
-    let audioFile = ytdl.downloadFromInfo(videoInfo, {
-      format: audioFormatInfo,
-    });
-    let videoFile = ytdl.downloadFromInfo(videoInfo, {
+    const videoFile = ytdl.downloadFromInfo(videoInfo, {
       format: highQualityVideo,
     });
+    const audioFile = ytdl.downloadFromInfo(videoInfo, {
+      format: audioFormatInfo,
+    });
 
-    if (highQualityVideo.container === "webm") {
-      videoFile = convertVideoFormat(videoFile);
-    }
+    const videoContentType =
+      highQualityVideo.container === "mp4" ? "video/mp4" : "video/webm";
+    const audioContentType =
+      audioFormatInfo.container === "mp3" ? "audio/mpeg" : "audio/webm";
 
-    if (audioFormatInfo.container === "webm") {
-      audioFile = convertAudioFormat(audioFile);
-    }
+    const videoKey =
+      highQualityVideo.container === "mp4"
+        ? `${folder}/videos/${title}-original.mp4`
+        : `${folder}/videos/${title}-original.webm`;
+    const audioKey =
+      audioFormatInfo.container === "mp3"
+        ? `${folder}/audios/${title}-original.mp3`
+        : `${folder}/audios/${title}-original.webm`;
 
     const videoUpload = new Upload({
       client: s3Client,
       params: {
         Bucket: process.env.AWS_BUCKET,
-        Key: `${folder}/videos/${title}-original.mp4`,
+        Key: videoKey,
         Body: videoFile,
+        ContentType: videoContentType,
       },
     });
-
     const audioUpload = new Upload({
       client: s3Client,
       params: {
         Bucket: process.env.AWS_BUCKET,
-        Key: `${folder}/audios/${title}-original.mp3`,
+        Key: audioKey,
         Body: audioFile,
+        ContentType: audioContentType,
       },
     });
 
