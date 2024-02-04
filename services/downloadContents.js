@@ -20,13 +20,13 @@ function downloadVideo(url, role) {
 
     const videoMp4Path = path.join(TEMP_DIR_VIDEOS[role], `${videoTitle}-original.mp4`);
     const videoWebmPath = path.join(TEMP_DIR_VIDEOS[role], `${videoTitle}-original.webm`);
-    const videoDir = fileExtension === "mp4" ? videoMp4Path : videoWebmPath;
+    const videoPath = fileExtension === "mp4" ? videoMp4Path : videoWebmPath;
 
     fs.mkdirSync(TEMP_DIR_VIDEOS[role], { recursive: true });
 
     s3Client.send(videoInfo)
       .then((data) => {
-        const videoStream = fs.createWriteStream(videoDir);
+        const videoStream = fs.createWriteStream(videoPath);
 
         data.Body.pipe(videoStream);
         data.Body.on("end", async () => {
@@ -54,13 +54,13 @@ function downloadAudio(url, role) {
 
     const audioMp3Path = path.join(TEMP_DIR_AUDIOS[role], `${audioTitle}-original.mp3`);
     const audioWebmPath = path.join(TEMP_DIR_AUDIOS[role], `${audioTitle}-original.webm`);
-    const audioDir = fileExtension === "mp3" ? audioMp3Path : audioWebmPath;
+    const audioPath = fileExtension === "mp3" ? audioMp3Path : audioWebmPath;
 
     fs.mkdirSync(TEMP_DIR_AUDIOS[role], { recursive: true });
 
     s3Client.send(audioInfo)
       .then((data) => {
-        const audioStream = fs.createWriteStream(audioDir);
+        const audioStream = fs.createWriteStream(audioPath);
         data.Body.pipe(audioStream);
         data.Body.on("end", async () => {
           if (fileExtension === "webm") {
