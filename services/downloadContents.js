@@ -1,18 +1,16 @@
 /* eslint-disable  */
 const fs = require("fs");
 const path = require("path");
-const { exec } = require("child_process");
+const parseUrl = require("../util/parseIrl");
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
 
-const { S3_DIR } = require("../constants/paths");
 const s3Client = require("../aws/s3Client");
+const { TEMP_DIR_VIDEOS, TEMP_DIR_AUDIOS } = require("../constants/paths");
+const { convertVideoFormat, convertAudioFormat } = require("./convertFileFormat");
 
 function downloadVideo(url, role) {
   return new Promise((resolve, reject) => {
-    const fullUrl = new URL(url);
-    const key = fullUrl.pathname.substring(1);
-    const bucketName = fullUrl.hostname.split(".")[0];
-    const videoExtension = key.split('.').pop().toLowerCase();
+    const { key, bucketName, fileExtension } = parseUrl(url);
     const videoTitle = role.toLowerCase();
 
     const videoInfo = new GetObjectCommand({
@@ -20,28 +18,21 @@ function downloadVideo(url, role) {
       Key: key,
     });
 
-    const videoWebmDir = path.join(S3_DIR.VIDEOS[role], `${videoTitle}-original.webm`);
-    const videoMp4Dir = path.join(S3_DIR.VIDEOS[role], `${videoTitle}-original.mp4`);
-    const videoDir = videoExtension === "mp4" ? videoMp4Dir : videoWebmDir;
-    const ffmpegCommand = `ffmpeg -i "${videoMp4Dir}" -c:v libx264 -preset slow -crf 22 "${videoWebmDir}"`;
+    const videoMp4Path = path.join(TEMP_DIR_VIDEOS[role], `${videoTitle}-original.mp4`);
+    const videoWebmPath = path.join(TEMP_DIR_VIDEOS[role], `${videoTitle}-original.webm`);
+    const videoDir = fileExtension === "mp4" ? videoMp4Path : videoWebmPath;
 
-    fs.mkdirSync(S3_DIR.VIDEOS[role], { recursive: true });
+    fs.mkdirSync(TEMP_DIR_VIDEOS[role], { recursive: true });
 
     s3Client.send(videoInfo)
       .then((data) => {
-        const fileStream = fs.createWriteStream(videoDir);
+        const videoStream = fs.createWriteStream(videoDir);
 
-        data.Body.pipe(fileStream);
-        data.Body.on("end", () => {
-          if (videoExtension === "mp4") {
-            exec(ffmpegCommand, (error, stdout, stderr) => {
-              if (error) {
-                reject(error);
-                return;
-              }
-
-              resolve();
-            })
+        data.Body.pipe(videoStream);
+        data.Body.on("end", async () => {
+          if (fileExtension === "webm") {
+            await convertVideoFormat(videoWebmPath, videoMp4Path);
+            resolve();
           } else {
             resolve();
           }
@@ -53,10 +44,7 @@ function downloadVideo(url, role) {
 
 function downloadAudio(url, role) {
   return new Promise((resolve, reject) => {
-    const fullUrl = new URL(url);
-    const key = fullUrl.pathname.substring(1);
-    const bucketName = fullUrl.hostname.split(".")[0];
-    const audioExtension = key.split('.').pop().toLowerCase();
+    const { key, bucketName, fileExtension } = parseUrl(url);
     const audioTitle = role.toLowerCase();
 
     const audioInfo = new GetObjectCommand({
@@ -64,27 +52,20 @@ function downloadAudio(url, role) {
       Key: key,
     });
 
-    const audioWebmDir = path.join(S3_DIR.AUDIOS[role], `${audioTitle}-original.webm`);
-    const audioMp4Dir = path.join(S3_DIR.AUDIOS[role], `${audioTitle}-original.mp3`);
-    const audioDir = audioExtension === "mp3" ? audioMp4Dir : audioWebmDir;
-    const ffmpegCommand = `ffmpeg -i "${audioWebmDir}" -c:v libx264 -preset slow -crf 22 "${audioMp4Dir}"`;
+    const audioMp3Path = path.join(TEMP_DIR_AUDIOS[role], `${audioTitle}-original.mp3`);
+    const audioWebmPath = path.join(TEMP_DIR_AUDIOS[role], `${audioTitle}-original.webm`);
+    const audioDir = fileExtension === "mp3" ? audioMp3Path : audioWebmPath;
 
-    fs.mkdirSync(S3_DIR.AUDIOS[role], { recursive: true });
+    fs.mkdirSync(TEMP_DIR_AUDIOS[role], { recursive: true });
 
     s3Client.send(audioInfo)
       .then((data) => {
-        const fileStream = fs.createWriteStream(audioDir);
-        data.Body.pipe(fileStream);
-        data.Body.on("end", () => {
-          if (audioExtension === "webm") {
-            exec(ffmpegCommand, (error, stdout, stderr) => {
-              if (error) {
-                reject(error);
-                return;
-              }
-
-              resolve();
-            })
+        const audioStream = fs.createWriteStream(audioDir);
+        data.Body.pipe(audioStream);
+        data.Body.on("end", async () => {
+          if (fileExtension === "webm") {
+            await convertAudioFormat(audioWebmPath, audioMp3Path)
+            resolve();
           } else {
             resolve();
           }
@@ -94,8 +75,9 @@ function downloadAudio(url, role) {
   });
 }
 
- exports.downloadAllVideos = async (urls) => {
-  for (const role in urls) {
+ async function downloadAllVideos(urls) {
+  const urlList = Object.keys(urls);
+  for (const role of urlList) {
     switch(role) {
       case "mainVideoUrl":
         await downloadVideo(urls[role], "MAIN");
@@ -115,19 +97,20 @@ function downloadAudio(url, role) {
   }
 }
 
-exports.downloadAllAudios = async (urls) => {
-  for (const role in urls) {
+async function downloadAllAudios(urls) {
+  const urlList = Object.keys(urls);
+  for (const role of urlList) {
     switch(role) {
       case "mainAudioUrl":
-        downloadAudio(urls[role], "MAIN");
+        await downloadAudio(urls[role], "MAIN");
         break;
 
       case "firstSubAudioUrl":
-        downloadAudio(urls[role], "SUB_ONE");
+        await downloadAudio(urls[role], "SUB_ONE");
         break;
 
       case "lastSubAudioUrl":
-        downloadAudio(urls[role], "SUB_TWO");
+        await downloadAudio(urls[role], "SUB_TWO");
         break;
 
       default:
@@ -135,3 +118,5 @@ exports.downloadAllAudios = async (urls) => {
     }
   }
 }
+
+module.exports = { downloadAllVideos, downloadAllAudios };
