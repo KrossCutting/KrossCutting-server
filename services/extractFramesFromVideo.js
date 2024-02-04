@@ -12,8 +12,8 @@ async function extractFramesFromVideo(inputPath, framePath, startSecond, fps) {
       "-ss",
       startSecond,
       "-start_number",
-      "1",
-      path.join(framePath, `frame_%d.jpg`),
+      "0",
+      path.join(framePath, `frame_${fps}fps_%d.jpg`),
     ]);
 
     ffmpegProcess.stdout.on("data", (data) => {
