@@ -7,10 +7,10 @@ const extractFramesFromVideo = require("../../services/extractFramesFromVideo");
 exports.videoToFrame = async function (req, res, next) {
   try {
     const tempDirectory = path.join(__dirname, "../../temp");
-    const videoTotalPathList = Object.entries(req.body.videoUrls);
-    const startPointsList = Object.values(req.body.startPoints);
+    const videoPathList = Object.entries(req.body.videoUrls);
+    const startPointList = Object.values(req.body.startPoints);
 
-    const videoPromiseLists = videoTotalPathList.map(
+    const videoPromiseLists = videoPathList.map(
       ([folderPath, filePath], index) => {
         const videoPath = path.join(
           tempDirectory,
@@ -20,7 +20,7 @@ exports.videoToFrame = async function (req, res, next) {
           tempDirectory,
           `frames/${convertPath(folderPath)}`,
         );
-        const startTime = startPointsList[index];
+        const startTime = startPointList[index];
 
         if (!fs.existsSync(framesFolderPath)) {
           fs.mkdirSync(framesFolderPath, { recursive: true });
