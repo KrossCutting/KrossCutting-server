@@ -1,10 +1,10 @@
 /* eslint-disable  */
 const fs = require("fs");
 const path = require("path");
-const parseUrl = require("../util/parseIrl");
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
 
 const s3Client = require("../aws/s3Client");
+const parseUrl = require("../util/parseIrl");
 const { TEMP_DIR_VIDEOS, TEMP_DIR_AUDIOS } = require("../constants/paths");
 const { convertVideoFormat, convertAudioFormat } = require("./convertFileFormat");
 
@@ -77,6 +77,7 @@ function downloadAudio(url, role) {
 
  async function downloadAllVideos(urls) {
   const urlList = Object.keys(urls);
+
   for (const role of urlList) {
     switch(role) {
       case "mainVideoUrl":
@@ -99,6 +100,7 @@ function downloadAudio(url, role) {
 
 async function downloadAllAudios(urls) {
   const urlList = Object.keys(urls);
+
   for (const role of urlList) {
     switch(role) {
       case "mainAudioUrl":
