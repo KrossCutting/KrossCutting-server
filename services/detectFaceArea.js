@@ -1,9 +1,12 @@
+/* eslint-disable no-restricted-syntax, no-await-in-loop */
 const path = require("path");
 const fs = require("fs").promises;
 const tf = require("@tensorflow/tfjs-node");
 const blazeface = require("@tensorflow-models/blazeface");
 
 const frameContentsDirectory = path.join(__dirname, "../temp/frames");
+
+const PROBABILITY_RATE_THRESHOLD = 0.95;
 
 function loadFaceModel() {
   return blazeface.load();
@@ -23,7 +26,7 @@ async function detectFace(imagePath, model) {
   if (predictions.length === 1) {
     const face = predictions[0];
 
-    if (face.probability[0] >= 0.95) {
+    if (face.probability[0] >= PROBABILITY_RATE_THRESHOLD) {
       return true;
     }
   }
@@ -56,18 +59,17 @@ async function detectFaceInFrame(folderName) {
     framesForDetectFace.push(framePathOf1fps);
   }
 
-  const listOfFaceDetection = framesForDetectFace.map((framePathOf1fps) =>
-    detectFace(framePathOf1fps, modelOfFaceDetection),
-  );
+  const detectedFrames = [];
 
-  const resultsOfFaceDetection = await Promise.allSettled(listOfFaceDetection);
-  const detectedFramePathList = resultsOfFaceDetection.filter(
-    (_, index) =>
-      resultsOfFaceDetection[index].status === "fulfilled" &&
-      resultsOfFaceDetection[index].value,
-  );
+  for (const framePathOf1fps of framesForDetectFace) {
+    const hasFace = await detectFace(framePathOf1fps, modelOfFaceDetection);
 
-  return detectedFramePathList;
+    if (hasFace) {
+      detectedFrames.push(framePathOf1fps);
+    }
+  }
+
+  return detectedFrames;
 }
 
 module.exports = detectFaceInFrame;
