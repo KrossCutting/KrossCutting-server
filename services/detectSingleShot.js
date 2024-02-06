@@ -9,6 +9,7 @@ const frameContentsDirectory = path.join(__dirname, "../temp/frames");
 
 const LOW_FRAME_WIDTH = 250;
 const LOW_FRAME_HEIGHT = 250;
+const BLACK_THRESHOLD = 20;
 
 async function ensureDir(fileDirectory) {
   try {
@@ -18,8 +19,8 @@ async function ensureDir(fileDirectory) {
   }
 }
 
-async function detectSingleShot(floderName) {
-  const currentFileDirectory = path.join(frameContentsDirectory, floderName);
+async function detectSingleShot(folderName) {
+  const currentFileDirectory = path.join(frameContentsDirectory, folderName);
   const frameList = await fs.readdir(currentFileDirectory);
 
   frameList.sort(
@@ -44,7 +45,7 @@ async function detectSingleShot(floderName) {
 
   const outputFileDirectory = path.join(
     __dirname,
-    `../temp/difference/${floderName}`,
+    `../temp/difference/${folderName}`,
   );
 
   await ensureDir(outputFileDirectory);
@@ -91,12 +92,19 @@ async function detectSingleShot(floderName) {
         .toBuffer({ resolveWithObject: true });
 
       for (let i = 0; i < data.length; i += info.channels) {
-        const isDark = data[i] < 20 && data[i + 1] < 20 && data[i + 2] < 20;
+        let red = data[i];
+        let green = data[i + 1];
+        let blue = data[i + 2];
+
+        const isDark =
+          red < BLACK_THRESHOLD &&
+          green < BLACK_THRESHOLD &&
+          blue < BLACK_THRESHOLD;
         const colorValue = isDark ? 0 : 255;
 
-        data[i] = colorValue;
-        data[i + 1] = colorValue;
-        data[i + 2] = colorValue;
+        red = colorValue;
+        green = colorValue;
+        blue = colorValue;
       }
 
       await sharp(data, {
