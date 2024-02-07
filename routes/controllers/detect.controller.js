@@ -1,7 +1,7 @@
 const detectFaceArea = require("../../services/detectFaceArea");
 const detectSingleShot = require("../../services/detectSingleShot");
 
-exports.processFrames = async function (req, res, next) {
+exports.getSingleShotFrames = async function (req, res, next) {
   // TODO. detect관련 서비스들이 실행됩니다.
   // 컨트롤러로 위치하였으나 추후 로직 연결에 따라 변경될 수 있습니다.
 

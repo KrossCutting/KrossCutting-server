@@ -3,7 +3,7 @@ const sharp = require("sharp");
 const BLACK_THRESHOLD = 11;
 const MOVEMENT_THRESHOLD = 0.09;
 
-async function findBlackArea(imagePath) {
+async function detectMovement(imagePath) {
   const { data, info } = await sharp(imagePath)
     .raw()
     .toBuffer({ resolveWithObject: true });
@@ -33,4 +33,4 @@ async function findBlackArea(imagePath) {
   return false;
 }
 
-module.exports = findBlackArea;
+module.exports = detectMovement;
