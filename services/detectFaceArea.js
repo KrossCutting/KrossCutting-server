@@ -44,7 +44,7 @@ async function detectFaceInFrame(folderName) {
       parseInt(a.split("_").pop(), 10) - parseInt(b.split("_").pop(), 10),
   );
 
-  const framesForDetectFace = [];
+  const detectedFrames = [];
 
   for (
     let indexOf30fps = 0;
@@ -55,13 +55,6 @@ async function detectFaceInFrame(folderName) {
       currentFileDirectory,
       frameList[indexOf30fps],
     );
-
-    framesForDetectFace.push(framePathOf1fps);
-  }
-
-  const detectedFrames = [];
-
-  for (const framePathOf1fps of framesForDetectFace) {
     const hasFace = await detectFace(framePathOf1fps, modelOfFaceDetection);
 
     if (hasFace) {
