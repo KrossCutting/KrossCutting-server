@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const convertPath = require("../../services/convertPath");
-const extractFramesFromVideo = require("../../services/extractFramesFromVideo");
+const extractFramesFromVideo = require("../../services/extractFrames");
 
 exports.videoToFrame = async function (req, res, next) {
   try {
@@ -26,19 +26,11 @@ exports.videoToFrame = async function (req, res, next) {
           fs.mkdirSync(framesFolderPath, { recursive: true });
         }
 
-        if (convertPath(folderPath) === "main-contents") {
-          return extractFramesFromVideo(
-            videoPath,
-            framesFolderPath,
-            startTime,
-            30,
-          );
-        }
         return extractFramesFromVideo(
           videoPath,
           framesFolderPath,
           startTime,
-          1,
+          30,
         );
       },
     );
