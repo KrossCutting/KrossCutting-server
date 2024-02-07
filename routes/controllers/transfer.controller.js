@@ -5,7 +5,7 @@ const s3Client = require("../../aws/s3Client");
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
-const getMediaResources = require("../../services/getMediaResources");
+const getMediaResources = require("../../services/transferMediaResources");
 
 exports.transferMedia = async function (req, res, next) {
   try {
@@ -83,7 +83,8 @@ exports.transferMedia = async function (req, res, next) {
     }));
 
     return res.status(200).send({
-      message: "success",
+      result: "success",
+      message: "client urls sent successfully",
       videoUrlList: s3ClientVideoUrlList,
       audioUrlList: s3ClientAudioUrlList,
     });
