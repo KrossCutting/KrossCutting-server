@@ -2,7 +2,7 @@ const detectMovement = require("./detectMovement");
 
 const MOVEMENT_THRESHOLD = 0.09;
 
-async function detectSingleMovement(sortedFrameList, folderName) {
+async function getSingleMovementFrames(sortedFrameList, folderName) {
   const detectedMovementList = await detectMovement(
     sortedFrameList,
     folderName,
@@ -12,7 +12,7 @@ async function detectSingleMovement(sortedFrameList, folderName) {
     (movementOfFrame) => movementOfFrame.movementRatio > MOVEMENT_THRESHOLD,
   );
 
-  const detectedSingleMovementFrames = detectedSingleShotList.map(
+  const detectedSingleMovementFrameNumbers = detectedSingleShotList.map(
     (movementOfFrame) => {
       const framePath = movementOfFrame.path;
 
@@ -20,7 +20,7 @@ async function detectSingleMovement(sortedFrameList, folderName) {
     },
   );
 
-  return detectedSingleMovementFrames;
+  return detectedSingleMovementFrameNumbers;
 }
 
-module.exports = detectSingleMovement;
+module.exports = getSingleMovementFrames;

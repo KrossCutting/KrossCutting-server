@@ -1,7 +1,7 @@
 const analyzeSingleFace = require("./analyzeSingleFace");
 const detectFace = require("./detectFace");
 
-async function detectSingleFaceFrames(sortedFrameList) {
+async function getSingleFaceFrames(sortedFrameList) {
   const detectedFaceCountPromiseList = await Promise.allSettled(
     sortedFrameList.map((framePath) => detectFace(framePath)),
   );
@@ -14,11 +14,11 @@ async function detectSingleFaceFrames(sortedFrameList) {
     (framePredictionResult) => analyzeSingleFace(framePredictionResult),
   );
 
-  const detectedFaceFrameNumberList = detectedSingleFaceList
+  const detectedFaceFrameNumbers = detectedSingleFaceList
     .filter((path) => path !== null)
     .map((framePath) => parseInt(framePath.split("_").pop(), 10));
 
-  return detectedFaceFrameNumberList;
+  return detectedFaceFrameNumbers;
 }
 
-module.exports = detectSingleFaceFrames;
+module.exports = getSingleFaceFrames;
