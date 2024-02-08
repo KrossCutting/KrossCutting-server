@@ -4,6 +4,8 @@ const fs = require("fs").promises;
 const mainFrameDirectory = path.join(__dirname, "../temp/frames/main-contents");
 const select1fpsFrames = require("../util/select1fpsFrames");
 
+const MOVEMENT_THRESHOLD = 0.09;
+
 async function analyzeDuration(
   singleShotNumberList,
   faceCountResults,
@@ -55,7 +57,7 @@ async function analyzeDuration(
       const { predictions } = faceCountResults[nextFrame];
       const { movementRatio } = movementResults[nextFrame];
 
-      if (predictions.length >= 1 || movementRatio > 0.09) {
+      if (predictions.length >= 1 || movementRatio > MOVEMENT_THRESHOLD) {
         duration += 1;
       } else {
         break;
