@@ -4,10 +4,11 @@ const fs = require("fs").promises;
 const getSingleFaceFrames = require("../../services/getSingleFaceFrames");
 const getSingleMovementFrames = require("../../services/getSingleMovementFrames");
 const select1fpsFrames = require("../../util/select1fpsFrames");
+const analyzeDuration = require("../../services/analyzeDuration");
 
 const frameContentsDirectory = path.join(__dirname, "../../temp/frames");
 
-exports.getSingleShotFrames = async function (req, res, next) {
+async function getSingleShotFrames(req, res, next) {
   // TODO. detect관련 서비스들이 실행됩니다.
   // 컨트롤러로 위치하였으나 추후 로직 연결에 따라 변경될 수 있습니다.
 
@@ -21,9 +22,8 @@ exports.getSingleShotFrames = async function (req, res, next) {
   const folderName = req.contentTitle;
   // 이후 컨트롤러 사용시 요청에 폴더명을 설정하여 전달해야합니다.
   const currentFrameDirectory = path.join(frameContentsDirectory, folderName);
-  let currentFramePathList = await fs.readdir(currentFrameDirectory);
-
-  currentFramePathList = currentFramePathList.map((frame) =>
+  const currentFrameFiles = await fs.readdir(currentFrameDirectory);
+  const currentFramePathList = currentFrameFiles.map((frame) =>
     path.join(currentFrameDirectory, frame),
   );
 
@@ -36,20 +36,22 @@ exports.getSingleShotFrames = async function (req, res, next) {
 
   const filteredFramePathList = select1fpsFrames(currentFramePathList);
 
-  const detectedSingleFaceFrames = await getSingleFaceFrames(
+  const detectedFaceFrameNumbers = await getSingleFaceFrames(
     filteredFramePathList,
   );
 
-  const detectedSingleMovementFrames = await getSingleMovementFrames(
+  const detectedSingleMovementFrameNumbers = await getSingleMovementFrames(
     filteredFramePathList,
     folderName,
   );
 
-  const filteredSingleShotFrames = detectedSingleMovementFrames.filter(
+  const filteredSingleShotFrames = detectedSingleMovementFrameNumbers.filter(
     (number) => {
-      return detectedSingleFaceFrames.includes(number);
+      return detectedFaceFrameNumbers.includes(number);
     },
   );
 
   return filteredSingleShotFrames;
-};
+}
+
+module.exports = getSingleShotFrames;
