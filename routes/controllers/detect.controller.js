@@ -36,14 +36,11 @@ async function getSingleShotFrames(req, res, next) {
 
   const filteredFramePathList = select1fpsFrames(currentFramePathList);
 
-  const detectedFaceFrameNumbers = await getSingleFaceFrames(
-    filteredFramePathList,
-  );
+  const { detectedFaceCountResults, detectedFaceFrameNumbers } =
+    await getSingleFaceFrames(filteredFramePathList);
 
-  const detectedSingleMovementFrameNumbers = await getSingleMovementFrames(
-    filteredFramePathList,
-    folderName,
-  );
+  const { detectedMovementList, detectedSingleMovementFrameNumbers } =
+    await getSingleMovementFrames(filteredFramePathList, folderName);
 
   const filteredSingleShotFrames = detectedSingleMovementFrameNumbers.filter(
     (number) => {
@@ -51,7 +48,13 @@ async function getSingleShotFrames(req, res, next) {
     },
   );
 
-  return filteredSingleShotFrames;
+  const singleShotEditPoints = await analyzeDuration(
+    filteredSingleShotFrames,
+    detectedFaceCountResults,
+    detectedMovementList,
+  );
+
+  return { filteredSingleShotFrames, singleShotEditPoints };
 }
 
 module.exports = getSingleShotFrames;
