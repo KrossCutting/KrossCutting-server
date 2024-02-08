@@ -18,7 +18,10 @@ async function getSingleFaceFrames(sortedFrameList) {
     .filter((path) => path !== null)
     .map((framePath) => parseInt(framePath.split("_").pop(), 10));
 
-  return detectedFaceFrameNumbers;
+  return {
+    detectedFaceCountResults,
+    detectedFaceFrameNumbers,
+  };
 }
 
 module.exports = getSingleFaceFrames;

@@ -20,7 +20,10 @@ async function getSingleMovementFrames(sortedFrameList, folderName) {
     },
   );
 
-  return detectedSingleMovementFrameNumbers;
+  return {
+    detectedMovementList,
+    detectedSingleMovementFrameNumbers,
+  };
 }
 
 module.exports = getSingleMovementFrames;
