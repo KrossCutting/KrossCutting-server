@@ -14,7 +14,6 @@
     "@aws-sdk/s3-request-presigner": "^3.504.0",
     "@tensorflow-models/blazeface": "^0.1.0",
     "@tensorflow/tfjs-node": "^4.17.0",
-    "canvas": "^2.11.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.1",
     "express": "~4.16.1",
