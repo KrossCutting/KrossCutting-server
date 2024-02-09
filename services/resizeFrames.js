@@ -37,6 +37,7 @@ function cutFrameArguments(mainCoord, subCoord, imgMetadata) {
         height: resizeHeight,
       };
     }
+
     const resizeWidth = Math.floor(
       imgMetadata.width - (mainFaceCoord.x - subFaceCoord.x),
     );
@@ -51,6 +52,7 @@ function cutFrameArguments(mainCoord, subCoord, imgMetadata) {
       height: resizeHeight,
     };
   }
+
   if (mainFaceCoord.y > subFaceCoord.y) {
     const resizeWidth = Math.floor(
       imgMetadata.width - (subFaceCoord.x - mainFaceCoord.x),
@@ -66,6 +68,7 @@ function cutFrameArguments(mainCoord, subCoord, imgMetadata) {
       height: resizeHeight,
     };
   }
+
   const resizeWidth = Math.floor(
     imgMetadata.width - (subFaceCoord.x - mainFaceCoord.x),
   );
@@ -123,20 +126,19 @@ async function resizeFrames(mainImg, subImg) {
       console.log("같은 얼굴이 아닙니다.  임의로 사이즈를 조정합니다.");
 
       const {
-        topLeft: [mainLeftX, mainTopY],
-        bottomRight: [mainRightX, mainBottomY],
+        topLeft: [mainLeftX, _1],
+        bottomRight: [mainRightX, _2],
       } = mainFaceCoord;
       const {
-        topLeft: [subLeftX, subTopY],
-        bottomRight: [subRightX, subBottomY],
+        topLeft: [subLeftX, _3],
+        bottomRight: [subRightX, _4],
       } = subFaceCoord;
 
       const widthMain = mainRightX - mainLeftX;
       const widthSub = subRightX - subLeftX;
       const ratio = widthMain / widthSub;
 
-      const [bigger, smaller] =
-        ratio > 1 ? [mainImg, subImg] : [subImg, mainImg];
+      const [_, smaller] = ratio > 1 ? [mainImg, subImg] : [subImg, mainImg];
       const resizeRatio = ratio > 1 ? ratio : 1 / ratio;
 
       sharp(smaller)
