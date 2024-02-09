@@ -5,7 +5,7 @@ const s3Client = require("../../aws/s3Client");
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
-const getMediaResources = require("../../services/transferMediaResources");
+const transferMediaResources = require("../../services/transferMediaResources");
 
 exports.transferMedia = async function (req, res, next) {
   try {
@@ -34,15 +34,15 @@ exports.transferMedia = async function (req, res, next) {
         let folder = "";
 
         switch (title) {
-          case "mainVideo":
+          case "mainYoutubeUrl":
             folder = "main-contents";
             break;
 
-          case "firstSubVideo":
+          case "subOneYoutubeUrl":
             folder = "sub-one-contents";
             break;
 
-          case "lastSubVideo":
+          case "subTwoYoutubeUrl":
             folder = "sub-two-contents";
             break;
 
@@ -50,13 +50,18 @@ exports.transferMedia = async function (req, res, next) {
             throw new Error(`Unknown title: ${title}`);
         }
 
-        await getMediaResources(title, url, s3Client, folder);
+        const [videoKey, audioKey] = await transferMediaResources(
+          title,
+          url,
+          s3Client,
+          folder
+        );
 
         const s3ClientVideoUrl = await getSignedUrl(
           s3Client,
           new GetObjectCommand({
             Bucket: process.env.AWS_BUCKET,
-            Key: `${folder}/videos/${title}-original.mp4`,
+            Key: videoKey,
           }),
           { expiresIn: 60000 }
         );
@@ -65,7 +70,7 @@ exports.transferMedia = async function (req, res, next) {
           s3Client,
           new GetObjectCommand({
             Bucket: process.env.AWS_BUCKET,
-            Key: `${folder}/audios/${title}-original.mp3`,
+            Key: audioKey,
           }),
           { expiresIn: 60000 }
         );
@@ -75,12 +80,12 @@ exports.transferMedia = async function (req, res, next) {
     );
 
     const s3ClientUrlList = await Promise.allSettled(clientUrlPromiseList);
-    const s3ClientVideoUrlList = s3ClientUrlList.map((urlInfo) => ({
-      [urlInfo.title]: urlInfo.videoUrl,
-    }));
-    const s3ClientAudioUrlList = s3ClientUrlList.map((urlInfo) => ({
-      [urlInfo.title]: urlInfo.audioUrl,
-    }));
+    const s3ClientVideoUrlList = s3ClientUrlList.map(
+      (urlInfo) => urlInfo.value.s3ClientVideoUrl
+    );
+    const s3ClientAudioUrlList = s3ClientUrlList.map(
+      (urlInfo) => urlInfo.value.s3ClientAudioUrl
+    );
 
     return res.status(200).send({
       result: "success",
