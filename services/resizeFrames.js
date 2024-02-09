@@ -1,7 +1,7 @@
 const sharp = require("sharp");
 const fs = require("fs");
 
-const getFaceCoordinate = require("./getFaceCoordinate");
+const detectFace = require("./detectFace");
 
 function cutFrameArguments(mainCoord, subCoord, imgMetadata) {
   const {
@@ -112,8 +112,8 @@ function verifySamePositionFace(mainCoord, subCoord, imgMetadata) {
 
 async function resizeFrames(mainImg, subImg) {
   try {
-    const mainFaceCoord = await getFaceCoordinate(mainImg);
-    const subFaceCoord = await getFaceCoordinate(subImg);
+    const mainFaceCoord = await detectFace(mainImg).predictions[0];
+    const subFaceCoord = await detectFace(subImg).predictions[0];
     const imgMetadata = await sharp(mainImg).metadata();
 
     if (!mainFaceCoord || !subFaceCoord) {
