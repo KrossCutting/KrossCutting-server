@@ -4,21 +4,22 @@ const path = require("path");
 const convertPath = require("../../services/convertPath");
 const extractFramesFromVideo = require("../../services/extractFrames");
 
+const { TEMP_DIR_VIDEOS, TEMP_DIR_FRAMES } = require("../../constants/paths");
+
 exports.videoToFrame = async function (req, res, next) {
   try {
-    const tempDirectory = path.join(__dirname, "../../temp");
     const videoPathList = Object.entries(req.body.videoUrls);
     const startPointList = Object.values(req.body.startPoints);
 
     const videoPromiseLists = videoPathList.map(
       ([folderPath, filePath], index) => {
         const videoPath = path.join(
-          tempDirectory,
-          `videos/${convertPath(folderPath)}/${filePath}`,
+          TEMP_DIR_VIDEOS.FORDER,
+          `./${convertPath(folderPath)}/${filePath}`,
         );
         const framesFolderPath = path.join(
-          tempDirectory,
-          `frames/${convertPath(folderPath)}`,
+          TEMP_DIR_FRAMES.FORDER,
+          `./${convertPath(folderPath)}`,
         );
         const startTime = startPointList[index];
 
