@@ -1,23 +1,29 @@
 const validateArrays = require("../../util/validateArrays");
-const sortCommonFrames = require("../../util/sortCommonFrames");
+const filterFramesByTwoSubs = require("../../util/filterFramesByTwoSubs");
 const getMatchedPercent = require("../../util/getMatchedPercent");
 const convertFrameToBinaryArray = require("../../services/convertFrameToBinaryArray");
 
-// To Do 매개변수 재설정 - 현재 임의로 설정됨
+// To Do 매개변수 재설정 및 에러 핸들링- 현재 임의로 설정됨
 async function chooseFrame(mainFrames, subOneFrames, subTwoFrames) {
   validateArrays(mainFrames, subOneFrames, subTwoFrames);
 
   const { doubleOverlappedFrames, subOneSingleShots, subTwoSingleShots } =
-    sortCommonFrames(mainFrames, subOneFrames, subTwoFrames);
+    filterFramesByTwoSubs(mainFrames, subOneFrames, subTwoFrames);
 
   await Promise.all(
     doubleOverlappedFrames.map(async (frameNumber) => {
-      const [mainBinary, subOneBinary, subTwoBinary] =
+      const [mainPixelBinary, subOnePixelBinary, subTwoPixelBinary] =
         await convertFrameToBinaryArray(frameNumber);
-      const subOnePercent = getMatchedPercent(mainBinary, subOneBinary);
-      const subTwoPercent = getMatchedPercent(mainBinary, subTwoBinary);
+      const subOneMatchRate = getMatchedPercent(
+        mainPixelBinary,
+        subOnePixelBinary,
+      );
+      const subTwoMatchRate = getMatchedPercent(
+        mainPixelBinary,
+        subTwoPixelBinary,
+      );
 
-      if (subOnePercent >= subTwoPercent) {
+      if (subOneMatchRate >= subTwoMatchRate) {
         subOneSingleShots.push(frameNumber);
       } else {
         subTwoSingleShots.push(frameNumber);

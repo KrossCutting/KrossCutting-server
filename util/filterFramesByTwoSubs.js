@@ -1,6 +1,6 @@
 const validateArrays = require("./validateArrays");
 
-function sortCommonFrames(mainFrames, subOneFrames, subTwoFrames) {
+function filterFramesByTwoSubs(mainFrames, subOneFrames, subTwoFrames) {
   validateArrays(mainFrames, subOneFrames, subTwoFrames);
 
   const doubleOverlappedFrames = mainFrames.filter((imageNumber) => {
@@ -35,4 +35,4 @@ function sortCommonFrames(mainFrames, subOneFrames, subTwoFrames) {
   };
 }
 
-module.exports = sortCommonFrames;
+module.exports = filterFramesByTwoSubs;

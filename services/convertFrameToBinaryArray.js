@@ -13,16 +13,13 @@ async function convertFrameToBinaryArray(imageNumber) {
       .raw()
       .toBuffer({ resolveWithObject: true });
 
-    const binaryArray = new Array(info.height).fill(null).map(() => new Array(info.width).fill(0));
+    const binaryArray = new Array(info.height * info.width).fill(1);
 
-    for (let y = 0; y < info.height; y += 1) {
-      for (let x = 0; x < info.width; x += 1) {
-        const index = (y * info.width + x) * info.channels;
-        binaryArray[y][x] = data[index] === 0 ? 0 : 1;
-      }
+    for (let i = 0; i < data.length; i += info.channels) {
+      binaryArray[Math.floor(i / info.channels)] = data[i] === 0 ? 0 : 1;
     }
 
-    return binaryArray.flat();
+    return binaryArray;
   });
 
   const binaryArrayList = await Promise.all(pathList);
