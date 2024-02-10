@@ -84,7 +84,7 @@ function cutFrameArguments(mainCoord, subCoord, imgMetadata) {
   };
 }
 
-function verifySamePositionFace(mainCoord, subCoord, imgMetadata) {
+function isSamePositionFace(mainCoord, subCoord, imgMetadata) {
   const {
     topLeft: [mainLeftX, mainTopY],
     bottomRight: [mainRightX, mainBottomY],
@@ -112,17 +112,25 @@ function verifySamePositionFace(mainCoord, subCoord, imgMetadata) {
 
 async function resizeFrames(mainImg, subImg) {
   try {
-    const mainFaceCoord = await detectFace(mainImg).predictions[0];
-    const subFaceCoord = await detectFace(subImg).predictions[0];
-    const imgMetadata = await sharp(mainImg).metadata();
+    const mainFaceData = await detectFace(mainImg);
+    const subFaceData = await detectFace(subImg);
+    const isNotExistFaceImg =
+      !mainFaceData.predictions ||
+      !subFaceData.predictions ||
+      !mainFaceData.predictions.length ||
+      !subFaceData.predictions.length;
 
-    if (!mainFaceCoord || !subFaceCoord) {
+    if (isNotExistFaceImg) {
       console.log("조회된 얼굴이 없습니다.");
 
       return null;
     }
 
-    if (!verifySamePositionFace(mainFaceCoord, subFaceCoord, imgMetadata)) {
+    const mainFaceCoord = mainFaceData.predictions[0];
+    const subFaceCoord = subFaceData.predictions[0];
+    const imgMetadata = await sharp(mainImg).metadata();
+
+    if (!isSamePositionFace(mainFaceCoord, subFaceCoord, imgMetadata)) {
       console.log("같은 얼굴이 아닙니다.  임의로 사이즈를 조정합니다.");
 
       const {
@@ -138,35 +146,34 @@ async function resizeFrames(mainImg, subImg) {
       const widthSub = subRightX - subLeftX;
       const ratio = widthMain / widthSub;
 
-      const [_, smaller] = ratio > 1 ? [mainImg, subImg] : [subImg, mainImg];
-      const resizeRatio = ratio > 1 ? ratio : 1 / ratio;
+      if (ratio > 1) {
+        sharp(subImg)
+          .resize(
+            Math.floor(imgMetadata.width * ratio),
+            Math.floor(imgMetadata.height * ratio),
+          )
+          .extract({
+            top: Math.floor(((ratio - 1) * imgMetadata.width) / 2),
+            left: Math.floor(((ratio - 1) * imgMetadata.height) / 2),
+            width: imgMetadata.width,
+            height: imgMetadata.height,
+          })
+          .toBuffer((err, buffer) => {
+            if (err) {
+              console.error(`이미지 생성 중 오류 발생: ${err.message}`);
+            } else {
+              fs.writeFile(subImg, buffer, (writeErr) => {
+                if (writeErr) {
+                  console.error(`이미지 저장 중 오류 발생 ${writeErr.message}`);
+                } else {
+                  console.log("성공적으로 이미지 저장 완료 되었습니다.");
+                }
+              });
+            }
+          });
 
-      sharp(smaller)
-        .resize(
-          Math.floor(imgMetadata.width * resizeRatio),
-          Math.floor(imgMetadata.height * resizeRatio),
-        )
-        .extract({
-          top: Math.floor(((resizeRatio - 1) * imgMetadata.width) / 2),
-          left: Math.floor(((resizeRatio - 1) * imgMetadata.height) / 2),
-          width: imgMetadata.width,
-          height: imgMetadata.height,
-        })
-        .toBuffer((err, buffer) => {
-          if (err) {
-            console.error(`이미지 생성 중 오류 발생: ${err.message}`);
-          } else {
-            fs.writeFile(smaller, buffer, (writeErr) => {
-              if (writeErr) {
-                console.error(`이미지 저장 중 오류 발생 ${writeErr.message}`);
-              } else {
-                console.log("성공적으로 이미지 저장 완료 되었습니다.");
-              }
-            });
-          }
-        });
-
-      return null;
+        return null;
+      }
     }
 
     sharp(subImg)
