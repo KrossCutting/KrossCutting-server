@@ -1,7 +1,7 @@
 const ytdl = require("ytdl-core");
 const { Upload } = require("@aws-sdk/lib-storage");
 
-async function getMediaResources(title, url, s3Client, folder) {
+async function transferMediaResources(title, url, s3Client, folder) {
   try {
     const videoInfo = await ytdl.getInfo(url);
 
@@ -59,6 +59,8 @@ async function getMediaResources(title, url, s3Client, folder) {
     });
 
     await Promise.allSettled([videoUpload.done(), audioUpload.done()]);
+
+    return [videoKey, audioKey];
   } catch (err) {
     console.error(err);
 
@@ -66,4 +68,4 @@ async function getMediaResources(title, url, s3Client, folder) {
   }
 }
 
-module.exports = getMediaResources;
+module.exports = transferMediaResources;
