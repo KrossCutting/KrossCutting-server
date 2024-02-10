@@ -3,35 +3,27 @@ const validateArrays = require("./validateArrays");
 function filterFramesByTwoSubs(mainFrames, subOneFrames, subTwoFrames) {
   validateArrays(mainFrames, subOneFrames, subTwoFrames);
 
-  const doubleOverlappedFrames = mainFrames.filter((imageNumber) => {
-    const hasSubOneSameFrame = subOneFrames.includes(imageNumber);
-    const hasSubTwoSameFrame = subTwoFrames.includes(imageNumber);
+  const doubleOverlappedFrames = [];
+  const subOneOverlappedFrames = [];
+  const subTwoOverlappedFrames = [];
+
+  mainFrames.forEach((frameNumber) => {
+    const hasSubOneSameFrame = subOneFrames.includes(frameNumber);
+    const hasSubTwoSameFrame = subTwoFrames.includes(frameNumber);
 
     if (hasSubOneSameFrame && hasSubTwoSameFrame) {
-      return true;
+      doubleOverlappedFrames.push(frameNumber);
+    } else if (hasSubOneSameFrame && !hasSubTwoSameFrame) {
+      subOneOverlappedFrames.push(frameNumber);
+    } else if (!hasSubOneSameFrame && hasSubTwoSameFrame) {
+      subTwoOverlappedFrames.push(frameNumber);
     }
-
-    return false;
-  });
-
-  const commonSubOne = subOneFrames.filter((imageNumber) => {
-    const hasMainSameFrame = mainFrames.includes(imageNumber);
-    const hasSubTwoSameFrame = subTwoFrames.includes(imageNumber);
-
-    return hasMainSameFrame && !hasSubTwoSameFrame;
-  });
-
-  const commonSubTwo = subTwoFrames.filter((imageNumber) => {
-    const hasMainSameFrame = mainFrames.includes(imageNumber);
-    const hasSubOneSameFrame = subOneFrames.includes(imageNumber);
-
-    return hasMainSameFrame && !hasSubOneSameFrame;
   });
 
   return {
     doubleOverlappedFrames,
-    subOneSingleShots: commonSubOne,
-    subTwoSingleShots: commonSubTwo,
+    subOneOverlappedFrames,
+    subTwoOverlappedFrames,
   };
 }
 
