@@ -1,8 +1,10 @@
 const path = require("path");
 const fs = require("fs").promises;
 
-const mainFrameDirectory = path.join(__dirname, "../temp/frames/main-contents");
 const select1fpsFrames = require("../util/select1fpsFrames");
+const { TEMP_DIR_FRAMES } = require("../constants/paths");
+
+const mainFrameDirectory = path.join(TEMP_DIR_FRAMES.MAIN);
 
 const MOVEMENT_THRESHOLD = 0.09;
 
@@ -57,11 +59,11 @@ async function analyzeDuration(
       const { predictions } = faceCountResults[nextFrame];
       const { movementRatio } = movementResults[nextFrame];
 
-      if (predictions.length >= 1 || movementRatio > MOVEMENT_THRESHOLD) {
-        duration += 1;
-      } else {
+      if (predictions.length < 1 || movementRatio <= MOVEMENT_THRESHOLD) {
         break;
       }
+
+      duration += 1;
     }
 
     replacementDuration[currentSingleShotPath] = duration;
