@@ -1,7 +1,8 @@
 const sharp = require("sharp");
-const fs = require("fs");
+const fs = require("fs").promises;
 
 const detectFace = require("./detectFace");
+const resizeAndDissolve = require("./resizeAndDissolve");
 
 function cutFrameArguments(mainCoord, subCoord, imgMetadata) {
   const {
@@ -110,7 +111,7 @@ function isSamePositionFace(mainCoord, subCoord, imgMetadata) {
   return !(widthDiff || heightDiff);
 }
 
-async function resizeFrames(mainImg, subImg) {
+async function resizeFrames(mainImg, subImg, durationTime) {
   try {
     const mainFaceData = await detectFace(mainImg);
     const subFaceData = await detectFace(subImg);
@@ -147,7 +148,7 @@ async function resizeFrames(mainImg, subImg) {
       const ratio = widthMain / widthSub;
 
       if (ratio > 1) {
-        sharp(subImg)
+        const imgBuffer = await sharp(subImg)
           .resize(
             Math.floor(imgMetadata.width * ratio),
             Math.floor(imgMetadata.height * ratio),
@@ -158,40 +159,26 @@ async function resizeFrames(mainImg, subImg) {
             width: imgMetadata.width,
             height: imgMetadata.height,
           })
-          .toBuffer((err, buffer) => {
-            if (err) {
-              console.error(`이미지 생성 중 오류 발생: ${err.message}`);
-            } else {
-              fs.writeFile(subImg, buffer, (writeErr) => {
-                if (writeErr) {
-                  console.error(`이미지 저장 중 오류 발생 ${writeErr.message}`);
-                } else {
-                  console.log("성공적으로 이미지 저장 완료 되었습니다.");
-                }
-              });
-            }
-          });
+          .toBuffer();
+
+        await fs.writeFile(subImg, imgBuffer);
 
         return null;
       }
     }
 
-    sharp(subImg)
-      .extract(cutFrameArguments(mainFaceCoord, subFaceCoord, imgMetadata))
-      .resize(imgMetadata.width, imgMetadata.height)
-      .toBuffer((err, buffer) => {
-        if (err) {
-          console.error(`이미지 생성 중 오류 발생: ${err.message}`);
-        } else {
-          fs.writeFile(subImg, buffer, (writeErr) => {
-            if (writeErr) {
-              console.error(`이미지 저장 중 오류 발생 ${writeErr.message}`);
-            } else {
-              console.log("성공적으로 이미지 저장 완료 되었습니다.");
-            }
-          });
-        }
-      });
+    const extractArguments = cutFrameArguments(
+      mainFaceCoord,
+      subFaceCoord,
+      imgMetadata,
+    );
+
+    await resizeAndDissolve(
+      subImg,
+      durationTime,
+      extractArguments,
+      imgMetadata,
+    );
 
     return null;
   } catch (faceDetectError) {
