@@ -50,7 +50,7 @@ async function upload(req, res, next) {
       (urlInfo) => urlInfo.value.s3ClientAudioUrl,
     );
 
-    res.status(200).send({
+    res.status(201).send({
       result: "success",
       message: "client urls send successfully",
       videoUrlList: s3ClientVideoUrlList,

@@ -32,17 +32,21 @@ const uploadToLocal = multer({
         case "mainVideoFile":
           fileName = "main-video";
           break;
+
         case "subOneVideoFile":
           fileName = "sub-one-video";
           break;
+
         case "subTwoVideoFile":
           fileName = "sub-two-video";
           break;
+
         default:
           throw new Error(`Unknown fileName: ${file.fieldname}`);
       }
 
       const ext = path.extname(file.originalname);
+
       done(null, fileName + ext);
     },
   }),
