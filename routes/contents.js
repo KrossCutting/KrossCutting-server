@@ -7,7 +7,7 @@ const uploadToLocal = require("../services/uploadToLocal");
 const transferController = require("./controllers/transfer.controller");
 
 router.post(
-  "/contents/files",
+  "/files",
   uploadToLocal.fields([
     { name: "mainVideoFile" },
     { name: "subOneVideoFile" },
@@ -16,6 +16,6 @@ router.post(
   upload,
 );
 
-router.post("/contents/urls", transferController.transferMedia);
+router.post("/urls", transferController.transferMedia);
 
 module.exports = router;
