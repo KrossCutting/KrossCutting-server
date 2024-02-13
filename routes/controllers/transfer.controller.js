@@ -7,7 +7,7 @@ const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
 const transferContents = require("../../services/transferContents");
 
-exports.transferMedia = async function (req, res, next) {
+async function transferMedia(req, res, next) {
   try {
     const videoRequest = req.body.videoUrls;
     const videoList = Object.entries(videoRequest)
@@ -103,4 +103,6 @@ exports.transferMedia = async function (req, res, next) {
       .status(500)
       .send({ message: "Error in processing videos", error: err.message });
   }
-};
+}
+
+module.exports = transferMedia;
