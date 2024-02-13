@@ -31,17 +31,10 @@ const TEMP_DIR_FRAMES = {
   SUB_TWO: path.join(__dirname, "../temp/frames/sub-two-contents"),
 };
 
-const S3_VIDEO_PATH = {
-  MAIN: "main-contents/videos/mainYoutubeUrl-original_multer.mp4",
-  SUB_ONE: "sub-one-contents/videos/subOneYoutubeUrl-original_multer.mp4",
-  SUB_TWO: "sub-two-contents/videos/subOneYoutubeUrl-original+multer.mp4",
-};
-
 module.exports = {
   TEMP_DIR_VIDEOS,
   TEMP_DIR_MP3,
   TEMP_DIR_WAV,
   TEMP_DIR_FRAMES,
   TEMP_DIR,
-  S3_VIDEO_PATH,
 };
