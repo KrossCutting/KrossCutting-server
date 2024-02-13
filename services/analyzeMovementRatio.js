@@ -2,7 +2,7 @@ const sharp = require("sharp");
 
 const BLACK_THRESHOLD = 11;
 
-async function analyzeSingleMovement(imagePath) {
+async function analyzeMovementRatio(imagePath) {
   const { data, info } = await sharp(imagePath)
     .raw()
     .toBuffer({ resolveWithObject: true });
@@ -28,4 +28,4 @@ async function analyzeSingleMovement(imagePath) {
   return blackRatio;
 }
 
-module.exports = analyzeSingleMovement;
+module.exports = analyzeMovementRatio;
