@@ -2,8 +2,7 @@ const path = require("path");
 const fs = require("fs").promises;
 
 const select1fpsFrames = require("../../util/select1fpsFrames");
-// TODO. 교체구간 판별 로직 추가 후 주석해제 합니다.
-// const analyzeDuration = require("../../services/analyzeDuration");
+const analyzeDuration = require("../../services/analyzeDuration");
 const detectSingleShots = require("../../services/detectSingleShots");
 const detectFace = require("../../services/detectFace");
 const detectMovement = require("../../services/detectMovement");
@@ -52,16 +51,15 @@ async function getSingleShotFrames(req, res, next) {
     detectedFaceResultOfAllFrames,
   );
 
-  // TODO. 교체구간 판별 로직 추가 후 주석해제 합니다.
-  /*  if (folderName === "main-contents") {
+  if (folderName === "main-contents") {
     const mainSingleShotEditDuration = await analyzeDuration(
       singleShotFrameList,
       detectedFaceResultOfAllFrames,
-      detectedMovementRatioOfAllFrames
+      detectedMovementRatioOfAllFrames,
     );
 
     return { singleShotFrameList, mainSingleShotEditDuration };
-  } */
+  }
 
   return singleShotFrameList;
 }
