@@ -12,7 +12,7 @@ async function analyzeDuration(
   faceDetectionResults,
   movementResults,
 ) {
-  const mainFrameFileList = await fs.readdir(TEMP_DIR_FRAMES);
+  const mainFrameFileList = await fs.readdir(TEMP_DIR_FRAMES.FOLDER);
   const mainFramePathList = mainFrameFileList.map((frame) =>
     path.join(TEMP_DIR_FRAMES, frame),
   );
@@ -24,7 +24,7 @@ async function analyzeDuration(
     return currentFramePath - nextFramePath;
   });
 
-  const filteredFramePathList = select1fpsFrames(mainFramePathList);
+  const filtered1fpsFramePathList = select1fpsFrames(mainFramePathList);
 
   const replacementDuration = {};
 
@@ -37,10 +37,10 @@ async function analyzeDuration(
     const currentSingleShotPath = singleShotFrameList[singleShotIndex];
     const nextSingleShotpath = singleShotFrameList[singleShotIndex + 1];
 
-    const currentSingleShotIndex = filteredFramePathList.findIndex(
+    const currentSingleShotIndex = filtered1fpsFramePathList.findIndex(
       (framePath) => framePath === currentSingleShotPath,
     );
-    const nextSingleShotIndex = filteredFramePathList.findIndex(
+    const nextSingleShotIndex = filtered1fpsFramePathList.findIndex(
       (framePath) => framePath === nextSingleShotpath,
     );
 
