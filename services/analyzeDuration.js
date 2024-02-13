@@ -3,8 +3,6 @@ const fs = require("fs").promises;
 
 const select1fpsFrames = require("../util/select1fpsFrames");
 const { TEMP_DIR_FRAMES } = require("../constants/paths");
-
-const mainFrameDirectory = path.join(TEMP_DIR_FRAMES.MAIN);
 // NOTICE: 메인이 아닌 mockup 데이터로 테스트시에는 디렉토리를 변경해야 합니다.
 
 const MOVEMENT_THRESHOLD = 0.09;
@@ -14,9 +12,9 @@ async function analyzeDuration(
   faceDetectionResults,
   movementResults,
 ) {
-  const mainFrameFileList = await fs.readdir(mainFrameDirectory);
+  const mainFrameFileList = await fs.readdir(TEMP_DIR_FRAMES);
   const mainFramePathList = mainFrameFileList.map((frame) =>
-    path.join(mainFrameDirectory, frame),
+    path.join(TEMP_DIR_FRAMES, frame),
   );
 
   mainFramePathList.sort((a, b) => {
