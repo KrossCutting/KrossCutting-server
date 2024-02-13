@@ -3,7 +3,7 @@ const path = require("path");
 const sharp = require("sharp");
 
 const ensureDir = require("../util/ensureDir");
-const analyzeSingleMovement = require("./analyzeSingleMovement");
+const analyzeMovementRatio = require("./analyzeMovementRatio");
 
 const LOW_FRAME_WIDTH = 250;
 const LOW_FRAME_HEIGHT = 250;
@@ -83,7 +83,7 @@ async function detectMovement(filteredFramePathList, folderName) {
       .extract({ width: 200, height: 200, left: 100, top: 100 })
       .toFile(outputPath);
 
-    const resultOfMovementRatio = await analyzeSingleMovement(outputPath);
+    const resultOfMovementRatio = await analyzeMovementRatio(outputPath);
 
     detectedMovementRatioList.push({
       path: currentFramePath,
