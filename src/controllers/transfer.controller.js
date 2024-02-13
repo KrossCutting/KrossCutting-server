@@ -1,11 +1,11 @@
 /* eslint-disable */
 const ytdl = require("ytdl-core");
-const s3Client = require("../../aws/s3Client");
+const s3Client = require("../aws/s3Client");
 
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
-const transferContents = require("../../services/transferContents");
+const transferContents = require("../services/transferContents");
 
 async function transferMedia(req, res, next) {
   try {

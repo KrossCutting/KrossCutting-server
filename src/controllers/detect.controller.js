@@ -1,13 +1,13 @@
 const path = require("path");
 const fs = require("fs").promises;
 
-const select1fpsFrames = require("../../util/select1fpsFrames");
-const analyzeDuration = require("../../services/analyzeDuration");
-const detectSingleShots = require("../../services/detectSingleShots");
-const detectFace = require("../../services/detectFace");
-const detectMovement = require("../../services/detectMovement");
+const select1fpsFrames = require("../util/select1fpsFrames");
+const analyzeDuration = require("../services/analyzeDuration");
+const detectSingleShots = require("../services/detectSingleShots");
+const detectFace = require("../services/detectFace");
+const detectMovement = require("../services/detectMovement");
 
-const frameContentsDirectory = path.join(__dirname, "../../temp/frames");
+const frameContentsDirectory = path.join(__dirname, "../temp/frames");
 
 async function getSingleShotFrames(req, res, next) {
   // TODO. 컨트롤러로 위치하였으나 추후 미들웨어로 변경됩니다.
