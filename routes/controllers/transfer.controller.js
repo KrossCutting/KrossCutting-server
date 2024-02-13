@@ -5,11 +5,14 @@ const s3Client = require("../../aws/s3Client");
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
-const transferMediaResources = require("../../services/transferMediaResources");
+const transferContents = require("../../services/transferContents");
 
-exports.transferMedia = async function (req, res, next) {
+async function transferMedia(req, res, next) {
   try {
-    const videoList = req.body.videoUrls;
+    const videoRequest = req.body.videoUrls;
+    const videoList = Object.entries(videoRequest)
+      .filter(([title, url]) => url && url.trim() !== "")
+      .reduce((acc, [title, url]) => ({ ...acc, [title]: url }), {});
 
     for (const url of Object.values(videoList)) {
       const infoOfVideo = await ytdl.getInfo(url);
@@ -50,7 +53,7 @@ exports.transferMedia = async function (req, res, next) {
             throw new Error(`Unknown title: ${title}`);
         }
 
-        const [videoKey, audioKey] = await transferMediaResources(
+        const [videoKey, audioKey] = await transferContents(
           title,
           url,
           s3Client,
@@ -100,4 +103,6 @@ exports.transferMedia = async function (req, res, next) {
       .status(500)
       .send({ message: "Error in processing videos", error: err.message });
   }
-};
+}
+
+module.exports = transferMedia;

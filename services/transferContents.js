@@ -1,7 +1,7 @@
 const ytdl = require("ytdl-core");
 const { Upload } = require("@aws-sdk/lib-storage");
 
-async function transferMediaResources(title, url, s3Client, folder) {
+async function transferContents(title, url, s3Client, folder) {
   try {
     const videoInfo = await ytdl.getInfo(url);
 
@@ -68,4 +68,4 @@ async function transferMediaResources(title, url, s3Client, folder) {
   }
 }
 
-module.exports = transferMediaResources;
+module.exports = transferContents;
