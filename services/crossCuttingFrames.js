@@ -111,7 +111,7 @@ function isSamePositionFace(mainCoord, subCoord, imgMetadata) {
   return !(widthDiff || heightDiff);
 }
 
-async function resizeFrames(mainImg, subImg, durationTime) {
+async function crossCuttingFrames(mainImg, subImg, durationTime) {
   try {
     const mainFaceData = await detectFace(mainImg);
     const subFaceData = await detectFace(subImg);
@@ -188,4 +188,4 @@ async function resizeFrames(mainImg, subImg, durationTime) {
   }
 }
 
-module.exports = resizeFrames;
+module.exports = crossCuttingFrames;
