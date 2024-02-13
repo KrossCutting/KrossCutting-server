@@ -5,12 +5,13 @@ const select1fpsFrames = require("../util/select1fpsFrames");
 const { TEMP_DIR_FRAMES } = require("../constants/paths");
 
 const mainFrameDirectory = path.join(TEMP_DIR_FRAMES.MAIN);
+// NOTICE: 메인이 아닌 mockup 데이터로 테스트시에는 디렉토리를 변경해야 합니다.
 
 const MOVEMENT_THRESHOLD = 0.09;
 
 async function analyzeDuration(
-  singleShotNumberList,
-  faceCountResults,
+  singleShotFrameList,
+  faceDetectionResults,
   movementResults,
 ) {
   const mainFrameFileList = await fs.readdir(mainFrameDirectory);
@@ -27,22 +28,16 @@ async function analyzeDuration(
 
   const filteredFramePathList = select1fpsFrames(mainFramePathList);
 
-  const mainSingleShotPathList = filteredFramePathList.filter((framePath) => {
-    const frameNumber = parseInt(framePath.split("_").pop(), 10);
-
-    return singleShotNumberList.includes(frameNumber);
-  });
-
   const replacementDuration = {};
 
   for (
     let singleShotIndex = 0;
-    singleShotIndex < mainSingleShotPathList.length - 1;
+    singleShotIndex < singleShotFrameList.length - 1;
     singleShotIndex += 1
   ) {
-    let duration = 0;
-    const currentSingleShotPath = mainSingleShotPathList[singleShotIndex];
-    const nextSingleShotpath = mainSingleShotPathList[singleShotIndex + 1];
+    let duration = 1;
+    const currentSingleShotPath = singleShotFrameList[singleShotIndex];
+    const nextSingleShotpath = singleShotFrameList[singleShotIndex + 1];
 
     const currentSingleShotIndex = filteredFramePathList.findIndex(
       (framePath) => framePath === currentSingleShotPath,
@@ -56,10 +51,14 @@ async function analyzeDuration(
       nextFrame < nextSingleShotIndex;
       nextFrame += 1
     ) {
-      const { predictions } = faceCountResults[nextFrame];
+      const { predictions } = faceDetectionResults[nextFrame];
       const { movementRatio } = movementResults[nextFrame];
 
-      if (predictions.length < 1 || movementRatio <= MOVEMENT_THRESHOLD) {
+      if (predictions.length < 1) {
+        break;
+      }
+
+      if (predictions.length < 1 && movementRatio <= MOVEMENT_THRESHOLD) {
         break;
       }
 
