@@ -1,4 +1,4 @@
-function detectSingleShots(movementRatioList, facePredictionList) {
+function detectSingleShots(facePredictionList, movementRatioList) {
   const movementRatioFrames = movementRatioList.map((frameMovementInfo) => {
     return frameMovementInfo.movementRatio;
   });
