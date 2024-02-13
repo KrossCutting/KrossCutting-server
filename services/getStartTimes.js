@@ -1,7 +1,7 @@
 const path = require("path");
 const { spawn } = require("child_process");
 
-const PYTHON_SCRIPT_PATH = path.join(__dirname, "./findAudioStart.py");
+const PYTHON_SCRIPT_PATH = path.join(__dirname, "./python/findAudioStart.py");
 
 function getStartTimes(args) {
   return new Promise((resolve, reject) => {
