@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const adjustAudio = require("../middlewares/adjustAudio");
+const adjustAudio = require("../src/middlewares/adjustAudio");
 
 router.post("/", adjustAudio);
 
