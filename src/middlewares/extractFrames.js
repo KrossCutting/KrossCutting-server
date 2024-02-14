@@ -1,6 +1,7 @@
 /* eslint-disable */
 const path = require("path")
 const ensureDir = require("../util/ensureDir");
+const removeDir = require("../util/removeDir");
 const extractFramesFromVideo = require("../services/extractFramesFromVideo");
 const { TEMP_DIR_FRAMES, TEMP_DIR_VIDEOS } = require("../constants/paths");
 
@@ -41,11 +42,11 @@ async function extractFrames(req, res, next) {
     }
 
     //To Do 실제 작업을 위한 removeDir 적용 필요
+    // removeDir(TEMP_DIR_VIDEOS.FOLDER);
 
     res.locals.videoCount = videoLabels.length;
 
     next()
-    res.status(200).send("success");
   } catch (err) {
     console.error(err);
 

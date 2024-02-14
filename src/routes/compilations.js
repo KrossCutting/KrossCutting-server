@@ -1,10 +1,11 @@
 const express = require("express");
 
 const router = express.Router();
+
+const adjustAudio = require("../middlewares/adjustAudio");
 const extractFrames = require("../middlewares/extractFrames");
 const findEditPoints = require("../middlewares/findEditPoints");
 
-// To Do. 교차 편집 컨트롤러 삽입 필요
-router.post("/", extractFrames);
+router.post("/", adjustAudio, extractFrames, findEditPoints);
 
 module.exports = router;
