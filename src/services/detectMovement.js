@@ -7,7 +7,6 @@ const analyzeMovementRatio = require("./analyzeMovementRatio");
 
 const LOW_FRAME_WIDTH = 250;
 const LOW_FRAME_HEIGHT = 250;
-const BLACK_THRESHOLD = 20;
 
 async function detectMovement(filteredFramePathList, folderName) {
   const outputFileDirectory = path.join(
@@ -55,22 +54,6 @@ async function detectMovement(filteredFramePathList, folderName) {
     const { data, info } = await sharp(resultOfDifference)
       .raw()
       .toBuffer({ resolveWithObject: true });
-
-    for (let i = 0; i < data.length; i += info.channels) {
-      let red = data[i];
-      let green = data[i + 1];
-      let blue = data[i + 2];
-
-      const isDark =
-        red < BLACK_THRESHOLD &&
-        green < BLACK_THRESHOLD &&
-        blue < BLACK_THRESHOLD;
-      const colorValue = isDark ? 0 : 255;
-
-      red = colorValue;
-      green = colorValue;
-      blue = colorValue;
-    }
 
     await sharp(data, {
       raw: {

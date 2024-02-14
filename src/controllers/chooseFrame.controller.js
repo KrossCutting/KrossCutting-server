@@ -1,7 +1,7 @@
-const validateArrays = require("../../util/validateArrays");
-const filterFramesByTwoSubs = require("../../util/filterFramesByTwoSubs");
-const getMatchedPercent = require("../../util/getMatchedPercent");
-const convertFrameToBinaryArray = require("../../services/convertFrameToBinaryArray");
+const validateArrays = require("../util/validateArrays");
+const filterFramesByTwoSubs = require("../util/filterFramesByTwoSubs");
+const getMatchedPercent = require("../util/getMatchedPercent");
+const convertFrameToBinaryArray = require("../services/convertFrameToBinaryArray");
 
 // To Do 매개변수 재설정 및 에러 핸들링- 현재 임의로 설정됨
 async function chooseFrame(mainFrames, subOneFrames, subTwoFrames) {

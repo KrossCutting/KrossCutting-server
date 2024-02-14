@@ -1,7 +1,7 @@
 const path = require("path");
 const multer = require("multer");
-const { TEMP_DIR_VIDEOS } = require("../constants/paths");
 const ensureDir = require("../util/ensureDir");
+const { TEMP_DIR_VIDEOS } = require("../constants/paths");
 
 const uploadToLocal = multer({
   storage: multer.diskStorage({

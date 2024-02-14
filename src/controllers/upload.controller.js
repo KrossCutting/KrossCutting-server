@@ -1,8 +1,8 @@
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const s3Client = require("../../aws/s3Client");
-const uploadToS3 = require("../../services/uploadToS3");
-const saveExtractedAudios = require("../../services/saveExtractedAudios");
+const s3Client = require("../aws/s3Client");
+const uploadToS3 = require("../services/uploadToS3");
+const saveExtractedAudios = require("../services/saveExtractedAudios");
 
 async function upload(req, res, next) {
   const fileInfo = req.files;
