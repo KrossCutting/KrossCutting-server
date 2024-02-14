@@ -68,8 +68,8 @@ async function getSingleShotFrames(req, res, next) {
     singleShots[folderName] = singleShotFrameList;
   }
 
-  res.loacls.editPoints = editPoints;
-  res.loacls.singleShots = singleShots;
+  res.locals.editPoints = editPoints;
+  res.locals.singleShots = singleShots;
 
   next();
 }
