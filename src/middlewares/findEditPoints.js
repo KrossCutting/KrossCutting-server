@@ -74,6 +74,4 @@ async function getSingleShotFrames(req, res, next) {
   next();
 }
 
-getSingleShotFrames();
-
 module.exports = getSingleShotFrames;
