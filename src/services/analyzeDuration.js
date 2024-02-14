@@ -12,9 +12,9 @@ async function analyzeDuration(
   faceDetectionResults,
   movementResults,
 ) {
-  const mainFrameFileList = await fs.readdir(TEMP_DIR_FRAMES.FOLDER);
+  const mainFrameFileList = await fs.readdir(TEMP_DIR_FRAMES.MAIN);
   const mainFramePathList = mainFrameFileList.map((frame) =>
-    path.join(TEMP_DIR_FRAMES, frame),
+    path.join(TEMP_DIR_FRAMES.MAIN, frame),
   );
 
   mainFramePathList.sort((a, b) => {
