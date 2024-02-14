@@ -22,7 +22,7 @@ function extractStartTime(args) {
         reject();
         return;
       }
-      resolve(result.trim());
+      resolve(JSON.parse(result.trim()));
     });
   });
 }

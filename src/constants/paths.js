@@ -23,6 +23,20 @@ const TEMP_DIR_WAV = {
   SUB_TWO: path.join(__dirname, "../temp/wav/sub-two"),
 };
 
+const TEMP_DIR_WAV_CUT = {
+  FOLDER: path.join(__dirname, "../temp/wavCut"),
+  MAIN: path.join(__dirname, "../temp/wavCut/main"),
+  SUB_ONE: path.join(__dirname, "../temp/wavCut/sub-one"),
+  SUB_TWO: path.join(__dirname, "../temp/wavCut/sub-two"),
+};
+
+const TEMP_DIR_WAV_ADJUSTED = {
+  FOLDER: path.join(__dirname, "../temp/wavAdjusted"),
+  MAIN: path.join(__dirname, "../temp/wavAdjusted/main"),
+  SUB_ONE: path.join(__dirname, "../temp/wavAdjusted/sub-one"),
+  SUB_TWO: path.join(__dirname, "../temp/wavAdjusted/sub-two"),
+};
+
 const TEMP_DIR_FRAMES = {
   FOLDER: path.join(__dirname, "../temp/frames"),
   DIFF: path.join(__dirname, "../temp/frames/difference"),
@@ -35,6 +49,8 @@ module.exports = {
   TEMP_DIR_VIDEOS,
   TEMP_DIR_MP3,
   TEMP_DIR_WAV,
+  TEMP_DIR_WAV_CUT,
+  TEMP_DIR_WAV_ADJUSTED,
   TEMP_DIR_FRAMES,
   TEMP_DIR,
 };
