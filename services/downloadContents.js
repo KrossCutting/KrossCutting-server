@@ -61,6 +61,7 @@ function downloadAudio(url, role) {
     s3Client.send(audioInfo)
       .then((data) => {
         const audioStream = fs.createWriteStream(audioPath);
+
         data.Body.pipe(audioStream);
         data.Body.on("end", async () => {
           if (fileExtension === "webm") {
