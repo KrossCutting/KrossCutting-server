@@ -9,11 +9,18 @@ const TEMP_DIR_VIDEOS = {
   SUB_TWO: path.join(__dirname, "../temp/videos/sub-two"),
 };
 
-const TEMP_DIR_AUDIOS = {
-  FOLDER: path.join(__dirname, "../temp/audios"),
-  MAIN: path.join(__dirname, "../temp/audios/main"),
-  SUB_ONE: path.join(__dirname, "../temp/audios/sub-one"),
-  SUB_TWO: path.join(__dirname, "../temp/audios/sub-two"),
+const TEMP_DIR_MP3 = {
+  FOLDER: path.join(__dirname, "../temp/mp3"),
+  MAIN: path.join(__dirname, "../temp/mp3/main"),
+  SUB_ONE: path.join(__dirname, "../temp/mp3/sub-one"),
+  SUB_TWO: path.join(__dirname, "../temp/mp3/sub-two"),
+};
+
+const TEMP_DIR_WAV = {
+  FOLDER: path.join(__dirname, "../temp/wav"),
+  MAIN: path.join(__dirname, "../temp/wav/main"),
+  SUB_ONE: path.join(__dirname, "../temp/wav/sub-one"),
+  SUB_TWO: path.join(__dirname, "../temp/wav/sub-two"),
 };
 
 const TEMP_DIR_FRAMES = {
@@ -26,7 +33,8 @@ const TEMP_DIR_FRAMES = {
 
 module.exports = {
   TEMP_DIR_VIDEOS,
-  TEMP_DIR_AUDIOS,
+  TEMP_DIR_MP3,
+  TEMP_DIR_WAV,
   TEMP_DIR_FRAMES,
   TEMP_DIR,
 };

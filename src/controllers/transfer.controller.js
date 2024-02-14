@@ -90,7 +90,7 @@ async function transferMedia(req, res, next) {
       (urlInfo) => urlInfo.value.s3ClientAudioUrl
     );
 
-    return res.status(200).send({
+    return res.status(201).send({
       result: "success",
       message: "client urls sent successfully",
       videoUrlList: s3ClientVideoUrlList,
