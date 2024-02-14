@@ -16,6 +16,7 @@ function replaceFrames(subImg, durationTime) {
 
       return [mainFramePath, subFramePath];
     });
+
   const transferFramePromiseList = transferFrameList.map(
     async ([mainFramePath, subFramePath]) => {
       await fs.copyFile(subFramePath, mainFramePath);

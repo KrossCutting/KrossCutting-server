@@ -7,10 +7,10 @@ async function extractFramesFromVideo(inputPath, framePath, startSecond) {
     const ffmpegProcess = spawn("ffmpeg", [
       "-i",
       inputPath,
-      "-vf",
-      "fps=30",
       "-ss",
       startSecond,
+      "-vf",
+      "fps=30",
       "-start_number",
       "0",
       path.join(framePath, "frame_30fps_%d.jpg"),
