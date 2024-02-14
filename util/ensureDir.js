@@ -1,10 +1,10 @@
-const fs = require("fs").promises;
+const fs = require("fs");
 
-async function ensureDir(fileDirectory) {
+function ensureDir(fileDirectory) {
   try {
-    await fs.access(fileDirectory);
+    fs.accessSync(fileDirectory);
   } catch (err) {
-    await fs.mkdir(fileDirectory, { recursive: true });
+    fs.mkdirSync(fileDirectory, { recursive: true });
   }
 }
 
