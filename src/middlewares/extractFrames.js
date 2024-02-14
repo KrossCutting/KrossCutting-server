@@ -11,7 +11,7 @@ async function extractFrames(req, res, next) {
 
     for (let i = 0; i < videoLabels.length; i += 1) {
       const videoLabel = videoLabels[i];
-      const startTime = req.body[videoLabel];
+      const startTime = res.locals.adjustedStartTimes[videoLabel];
 
       let inputPath = "";
       let outputPath = "";
@@ -36,7 +36,6 @@ async function extractFrames(req, res, next) {
           throw new Error(`Unknown videoLabel: ${videoLabel}`);
       }
 
-      console.log(outputPath);
       await ensureDir(outputPath);
       await extractFramesFromVideo(inputPath, outputPath, startTime);
     }
