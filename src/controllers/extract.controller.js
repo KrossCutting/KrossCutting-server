@@ -2,7 +2,8 @@ const fs = require("fs");
 const path = require("path");
 
 const convertPath = require("../services/convertPath");
-const extractFramesFromVideo = require("../services/extractFrames");
+
+const extractFramesFromVideo = require("../services/extractFramesFromVideo");
 
 const { TEMP_DIR_VIDEOS, TEMP_DIR_FRAMES } = require("../constants/paths");
 
