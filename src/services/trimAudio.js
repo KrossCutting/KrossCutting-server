@@ -1,6 +1,6 @@
 const { spawn } = require("child_process");
 
-function cutAudio(inputPath, outputPath, startTime) {
+function trimAudio(inputPath, outputPath, startTime) {
   return new Promise((resolve, reject) => {
     const ffmpegArgs = [
       "-i",
@@ -24,4 +24,4 @@ function cutAudio(inputPath, outputPath, startTime) {
   });
 }
 
-module.exports = cutAudio;
+module.exports = trimAudio;

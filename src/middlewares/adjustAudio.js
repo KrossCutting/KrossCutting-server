@@ -2,7 +2,7 @@
 const path = require("path");
 const ensureDir = require("../util/ensureDir");
 const removeDir = require("../util/removeDir");
-const cutAudio = require("../services/cutAudio");
+const trimAudio = require("../services/trimAudio");
 const extractStartTime = require("../services/extractStartTime");
 const { TEMP_DIR_WAV, TEMP_DIR_WAV_CUT, TEMP_DIR_WAV_ADJUSTED } = require("../constants/paths");
 
@@ -29,8 +29,8 @@ async function adjustAudio(req, res, next) {
           inputPath = path.join(TEMP_DIR_WAV.MAIN, "main-audio.wav");
           outputPath = path.join(TEMP_DIR_WAV_CUT.MAIN, "main-audio.wav");
           audioPaths.mainAudio = { outputPath, adjustedOutputPath};
-          ensureDir(TEMP_DIR_WAV_CUT.MAIN);
-          ensureDir(TEMP_DIR_WAV_ADJUSTED.MAIN);
+          await ensureDir(TEMP_DIR_WAV_CUT.MAIN);
+          await ensureDir(TEMP_DIR_WAV_ADJUSTED.MAIN);
           break;
 
         case "subOneStartPoint":
@@ -38,8 +38,8 @@ async function adjustAudio(req, res, next) {
           inputPath = path.join(TEMP_DIR_WAV.SUB_ONE, "sub-one-audio.wav");
           outputPath = path.join(TEMP_DIR_WAV_CUT.SUB_ONE, "sub-one-audio.wav");
           audioPaths.subOneAudio = { outputPath, adjustedOutputPath };
-          ensureDir(TEMP_DIR_WAV_CUT.SUB_ONE);
-          ensureDir(TEMP_DIR_WAV_ADJUSTED.SUB_ONE);
+          await ensureDir(TEMP_DIR_WAV_CUT.SUB_ONE);
+          await ensureDir(TEMP_DIR_WAV_ADJUSTED.SUB_ONE);
           break;
 
         case "subTwoStartPoint":
@@ -47,27 +47,27 @@ async function adjustAudio(req, res, next) {
           inputPath = path.join(TEMP_DIR_WAV.SUB_TWO, "sub-two-audio.wav");
           outputPath = path.join(TEMP_DIR_WAV_CUT.SUB_TWO, "sub-two-audio.wav");
           audioPaths.subTwoAudio = { outputPath, adjustedOutputPath };
-          ensureDir(TEMP_DIR_WAV_CUT.SUB_TWO);
-          ensureDir(TEMP_DIR_WAV_ADJUSTED.SUB_TWO);
+          await ensureDir(TEMP_DIR_WAV_CUT.SUB_TWO);
+          await ensureDir(TEMP_DIR_WAV_ADJUSTED.SUB_TWO);
           break;
 
         default:
           throw new Error(`Unknown VideoLabel: ${videoLabel}`);
       }
 
-      await cutAudio(inputPath, outputPath, startPoint);
+      await trimAudio(inputPath, outputPath, startPoint);
     }
 
+    const audioLabels = Object.keys(audioPaths);
     const audioList = Object.values(audioPaths).map((paths) => paths.outputPath);
     const adjustedStartTimes = await extractStartTime(audioList);
-    const audioLabels = Object.keys(audioPaths);
 
     for (let i = 0; i < adjustedStartTimes.length; i += 1) {
       const adjustedStartTime = adjustedStartTimes[i]
       const currentAudioLabel = audioLabels[i];
       const { outputPath, adjustedOutputPath } = audioPaths[currentAudioLabel];
 
-      await cutAudio(outputPath, adjustedOutputPath, adjustedStartTime);
+      await trimAudio(outputPath, adjustedOutputPath, adjustedStartTime);
     }
 
     // To Do. 실제 작업시 주석해제 필요
