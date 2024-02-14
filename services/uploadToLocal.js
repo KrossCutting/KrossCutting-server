@@ -12,12 +12,15 @@ const uploadToLocal = multer({
         case "mainVideoFile":
           destinationPath = TEMP_DIR_VIDEOS.MAIN;
           break;
+
         case "subOneVideoFile":
           destinationPath = TEMP_DIR_VIDEOS.SUB_ONE;
           break;
+
         case "subTwoVideoFile":
           destinationPath = TEMP_DIR_VIDEOS.SUB_TWO;
           break;
+
         default:
           throw new Error(`Unknown fileName: ${file.fieldname}`);
       }
