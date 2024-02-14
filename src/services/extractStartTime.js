@@ -3,7 +3,7 @@ const { spawn } = require("child_process");
 
 const PYTHON_SCRIPT_PATH = path.join(__dirname, "./python/findAudioStart.py");
 
-function getStartTimes(args) {
+function extractStartTime(args) {
   return new Promise((resolve, reject) => {
     const pythonProcess = spawn("python3", [PYTHON_SCRIPT_PATH, ...args]);
 
@@ -22,9 +22,9 @@ function getStartTimes(args) {
         reject();
         return;
       }
-      resolve(result.trim());
+      resolve(JSON.parse(result.trim()));
     });
   });
 }
 
-module.exports = getStartTimes;
+module.exports = extractStartTime;
