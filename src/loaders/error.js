@@ -1,4 +1,4 @@
-module.exports = function connectErrorMiddleware(app) {
+function connectErrorMiddleware(app) {
   app.use((req, res, next) => {
     const err = new Error("invalidUrl");
 
@@ -17,4 +17,6 @@ module.exports = function connectErrorMiddleware(app) {
       },
     });
   });
-};
+}
+
+module.exports = connectErrorMiddleware;

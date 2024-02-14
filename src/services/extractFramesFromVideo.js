@@ -2,27 +2,19 @@ const { spawn } = require("child_process");
 const path = require("path");
 
 // TO DO: ffmpeg에 전달하는 배열인수를 반환하는 함수(duration 옵션 추가 등)
-async function extractFramesFromVideo(inputPath, framePath, startSecond, fps) {
+async function extractFramesFromVideo(inputPath, framePath, startSecond) {
   return new Promise((resolve, reject) => {
     const ffmpegProcess = spawn("ffmpeg", [
       "-i",
       inputPath,
       "-vf",
-      `fps=${fps}`,
+      "fps=30",
       "-ss",
       startSecond,
       "-start_number",
       "0",
-      path.join(framePath, `frame_${fps}fps_%d.jpg`),
+      path.join(framePath, "frame_30fps_%d.jpg"),
     ]);
-
-    ffmpegProcess.stdout.on("data", (data) => {
-      console.log(`stdout: ${data}`);
-    });
-
-    ffmpegProcess.stderr.on("data", (data) => {
-      console.error(`stderr: ${data}`);
-    });
 
     ffmpegProcess.on("close", (code) => {
       if (code === 0) {
@@ -32,11 +24,6 @@ async function extractFramesFromVideo(inputPath, framePath, startSecond, fps) {
         console.error(`Error: ffmpeg process exited with code ${code}`);
         reject();
       }
-    });
-
-    ffmpegProcess.on("error", (err) => {
-      console.error(`Error: ${err.message}`);
-      reject();
     });
   });
 }

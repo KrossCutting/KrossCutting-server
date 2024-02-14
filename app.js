@@ -3,9 +3,9 @@ const express = require("express");
 
 const app = express();
 
-const connectServer = require("./loaders/express");
-const connectRouters = require("./loaders/routes");
-const connectErrorMiddleware = require("./loaders/error");
+const connectServer = require("./src/loaders/express");
+const connectRouters = require("./src/loaders/routes");
+const connectErrorMiddleware = require("./src/loaders/error");
 
 connectServer(app);
 connectRouters(app);
