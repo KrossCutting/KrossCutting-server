@@ -74,7 +74,32 @@ async function adjustAudio(req, res, next) {
     // removeDir(TEMP_DIR_WAV.FOLDER);
     // removeDir(TEMP_DIR_WAV_CUT.FOLDER);
 
-    res.locals.adjustedStartTimes = adjustedStartTimes;
+    const labelInfo = {}
+
+    adjustedStartTimes.forEach((startTime, index) => {
+      let videoLabel = "";
+
+      switch(index) {
+        case 0:
+          videoLabel = "mainStartPoint";
+          break;
+
+        case 1:
+          videoLabel = "subOneStartPoint";
+          break;
+
+        case 2:
+          videoLabel = "subTwoStartPoint";
+          break;
+
+        default:
+          throw new Error("given Video should be less than 3");
+      }
+
+      labelInfo[videoLabel] = startTime;
+    });
+
+    res.locals.adjustedStartTimes = labelInfo;
 
     next();
   } catch (err) {
