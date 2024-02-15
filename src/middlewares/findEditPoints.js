@@ -71,8 +71,6 @@ async function findEditPoints(req, res, next) {
     singleShots[folderName] = singleShotFrameList;
   }
 
-  console.log(editPoints, singleShots);
-
   res.loacls.editPoints = editPoints;
   res.loacls.singleShots = singleShots;
 
