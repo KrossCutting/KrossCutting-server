@@ -1,12 +1,12 @@
 /* eslint-disable */
 const path = require("path");
 const sharp = require("sharp");
+const { TEMP_DIR_DIFFERENCE } = require("../constants/paths");
 
 async function convertFrameToBinaryArray(imageNumber) {
-  // To DO 수진님 코드 머지되면 상수처리된 path 사용해서 코드 길이 줄이기
-  const mainFramePath = path.join(__dirname, `../temp/difference/main-contents/difference_${imageNumber}.jpg`);
-  const subOneFramePath = path.join(__dirname, `../temp/difference/sub-one-contents/difference_${imageNumber}.jpg`);
-  const subTwoFramePath = path.join(__dirname, `../temp/difference/sub-two-contents/difference_${imageNumber}.jpg`);
+  const mainFramePath = path.join(TEMP_DIR_DIFFERENCE.MAIN, `./difference_${imageNumber}.jpg`);
+  const subOneFramePath = path.join(TEMP_DIR_DIFFERENCE.SUB_ONE, `./difference_${imageNumber}.jpg`);
+  const subTwoFramePath = path.join(TEMP_DIR_DIFFERENCE.SUB_TWO, `./difference_${imageNumber}.jpg`);
 
   const pathList = [mainFramePath, subOneFramePath, subTwoFramePath].map(async (framePath) => {
     const { data, info } = await sharp(framePath)
