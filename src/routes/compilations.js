@@ -27,7 +27,7 @@ router.post(
 );
 
 router.get("/", (req, res) => {
-  res.json(progressStatus.stage);
+  res.status(200).json(progressStatus.stage);
 });
 
 module.exports = router;
