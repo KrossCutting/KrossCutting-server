@@ -10,7 +10,7 @@ const detectMovement = require("../services/detectMovement");
 
 const { TEMP_DIR_FRAMES } = require("../constants/paths");
 
-async function getSingleShotFrames(req, res, next) {
+async function findEditPoints(req, res, next) {
   const { videoCount } = res.locals;
   const folderList =
     videoCount === 2
@@ -68,10 +68,10 @@ async function getSingleShotFrames(req, res, next) {
     singleShots[folderName] = singleShotFrameList;
   }
 
-  res.loacls.editPoints = editPoints;
-  res.loacls.singleShots = singleShots;
+  res.locals.editPoints = editPoints;
+  res.locals.singleShots = singleShots;
 
   next();
 }
 
-module.exports = getSingleShotFrames;
+module.exports = findEditPoints;

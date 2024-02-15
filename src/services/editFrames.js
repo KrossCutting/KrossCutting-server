@@ -1,7 +1,9 @@
 const sharp = require("sharp");
-const fs = require("fs");
 
 const detectFace = require("./detectFace");
+const applyTransition = require("./applyTransition");
+const applyDissolve = require("./applyDissolve");
+const replaceFrames = require("./replaceFrames");
 
 function cutFrameArguments(mainCoord, subCoord, imgMetadata) {
   const {
@@ -37,7 +39,6 @@ function cutFrameArguments(mainCoord, subCoord, imgMetadata) {
         height: resizeHeight,
       };
     }
-
     const resizeWidth = Math.floor(
       imgMetadata.width - (mainFaceCoord.x - subFaceCoord.x),
     );
@@ -68,7 +69,6 @@ function cutFrameArguments(mainCoord, subCoord, imgMetadata) {
       height: resizeHeight,
     };
   }
-
   const resizeWidth = Math.floor(
     imgMetadata.width - (subFaceCoord.x - mainFaceCoord.x),
   );
@@ -110,20 +110,20 @@ function isSamePositionFace(mainCoord, subCoord, imgMetadata) {
   return !(widthDiff || heightDiff);
 }
 
-async function resizeFrames(mainImg, subImg) {
+async function editFrames(mainImg, subImg, durationTime) {
   try {
     const mainFaceData = await detectFace(mainImg);
     const subFaceData = await detectFace(subImg);
     const isNotExistFaceImg =
-      !mainFaceData.predictions ||
-      !subFaceData.predictions ||
-      !mainFaceData.predictions.length ||
-      !subFaceData.predictions.length;
+      !mainFaceData.predictions.length || !subFaceData.predictions.length;
 
     if (isNotExistFaceImg) {
       console.log("조회된 얼굴이 없습니다.");
 
-      return null;
+      await applyDissolve(mainImg, subImg);
+      await Promise.all(replaceFrames(subImg, durationTime));
+
+      return;
     }
 
     const mainFaceCoord = mainFaceData.predictions[0];
@@ -131,74 +131,24 @@ async function resizeFrames(mainImg, subImg) {
     const imgMetadata = await sharp(mainImg).metadata();
 
     if (!isSamePositionFace(mainFaceCoord, subFaceCoord, imgMetadata)) {
-      console.log("같은 얼굴이 아닙니다.  임의로 사이즈를 조정합니다.");
+      console.log("같은 위치의 얼굴이 아닙니다.");
 
-      const {
-        topLeft: [mainLeftX, _1],
-        bottomRight: [mainRightX, _2],
-      } = mainFaceCoord;
-      const {
-        topLeft: [subLeftX, _3],
-        bottomRight: [subRightX, _4],
-      } = subFaceCoord;
+      await applyDissolve(mainImg, subImg);
+      await Promise.all(replaceFrames(subImg, durationTime));
 
-      const widthMain = mainRightX - mainLeftX;
-      const widthSub = subRightX - subLeftX;
-      const ratio = widthMain / widthSub;
-
-      if (ratio > 1) {
-        sharp(subImg)
-          .resize(
-            Math.floor(imgMetadata.width * ratio),
-            Math.floor(imgMetadata.height * ratio),
-          )
-          .extract({
-            top: Math.floor(((ratio - 1) * imgMetadata.width) / 2),
-            left: Math.floor(((ratio - 1) * imgMetadata.height) / 2),
-            width: imgMetadata.width,
-            height: imgMetadata.height,
-          })
-          .toBuffer((err, buffer) => {
-            if (err) {
-              console.error(`이미지 생성 중 오류 발생: ${err.message}`);
-            } else {
-              fs.writeFile(subImg, buffer, (writeErr) => {
-                if (writeErr) {
-                  console.error(`이미지 저장 중 오류 발생 ${writeErr.message}`);
-                } else {
-                  console.log("성공적으로 이미지 저장 완료 되었습니다.");
-                }
-              });
-            }
-          });
-
-        return null;
-      }
+      return;
     }
 
-    sharp(subImg)
-      .extract(cutFrameArguments(mainFaceCoord, subFaceCoord, imgMetadata))
-      .resize(imgMetadata.width, imgMetadata.height)
-      .toBuffer((err, buffer) => {
-        if (err) {
-          console.error(`이미지 생성 중 오류 발생: ${err.message}`);
-        } else {
-          fs.writeFile(subImg, buffer, (writeErr) => {
-            if (writeErr) {
-              console.error(`이미지 저장 중 오류 발생 ${writeErr.message}`);
-            } else {
-              console.log("성공적으로 이미지 저장 완료 되었습니다.");
-            }
-          });
-        }
-      });
+    const extractArguments = cutFrameArguments(
+      mainFaceCoord,
+      subFaceCoord,
+      imgMetadata,
+    );
 
-    return null;
+    await applyTransition(subImg, durationTime, extractArguments, imgMetadata);
   } catch (faceDetectError) {
     console.error(`얼굴 좌표 연산 중 에러 발생 ${faceDetectError}`);
-
-    return null;
   }
 }
 
-module.exports = resizeFrames;
+module.exports = editFrames;

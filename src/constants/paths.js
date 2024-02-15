@@ -39,10 +39,16 @@ const TEMP_DIR_WAV_ADJUSTED = {
 
 const TEMP_DIR_FRAMES = {
   FOLDER: path.join(__dirname, "../temp/frames"),
-  DIFF: path.join(__dirname, "../temp/frames/difference"),
   MAIN: path.join(__dirname, "../temp/frames/main-contents"),
   SUB_ONE: path.join(__dirname, "../temp/frames/sub-one-contents"),
   SUB_TWO: path.join(__dirname, "../temp/frames/sub-two-contents"),
+};
+
+const TEMP_DIR_DIFFERENCE = {
+  FOLDER: path.join(__dirname, "../temp/difference"),
+  MAIN: path.join(__dirname, "../temp/difference/main-contents"),
+  SUB_ONE: path.join(__dirname, "../temp/difference/sub-one-contents"),
+  SUB_TWO: path.join(__dirname, "../temp/difference/sub-two-contents"),
 };
 
 module.exports = {
@@ -52,5 +58,6 @@ module.exports = {
   TEMP_DIR_WAV_CUT,
   TEMP_DIR_WAV_ADJUSTED,
   TEMP_DIR_FRAMES,
+  TEMP_DIR_DIFFERENCE,
   TEMP_DIR,
 };
