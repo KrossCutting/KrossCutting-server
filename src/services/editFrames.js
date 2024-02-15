@@ -1,5 +1,6 @@
 const sharp = require("sharp");
 
+const parseImgPath = require("../util/parseImgPath");
 const detectFace = require("./detectFace");
 const applyTransition = require("./applyTransition");
 const applyDissolve = require("./applyDissolve");
@@ -114,13 +115,14 @@ async function editFrames(mainImg, subImg, durationTime) {
   try {
     const mainFaceData = await detectFace(mainImg);
     const subFaceData = await detectFace(subImg);
+    const { frameNumber, videoLabel: subVideoLabel } = parseImgPath(subImg);
     const isNotExistFaceImg =
       !mainFaceData.predictions.length || !subFaceData.predictions.length;
 
     if (isNotExistFaceImg) {
       console.log("조회된 얼굴이 없습니다.");
 
-      await applyDissolve(mainImg, subImg);
+      await Promise.all(applyDissolve(frameNumber, subVideoLabel, 1));
       await Promise.all(replaceFrames(subImg, durationTime));
 
       return;
@@ -133,7 +135,7 @@ async function editFrames(mainImg, subImg, durationTime) {
     if (!isSamePositionFace(mainFaceCoord, subFaceCoord, imgMetadata)) {
       console.log("같은 위치의 얼굴이 아닙니다.");
 
-      await applyDissolve(mainImg, subImg);
+      await Promise.all(applyDissolve(frameNumber, subVideoLabel, 1));
       await Promise.all(replaceFrames(subImg, durationTime));
 
       return;
