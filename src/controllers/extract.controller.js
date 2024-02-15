@@ -14,11 +14,11 @@ exports.videoToFrame = async function (req, res, next) {
     const videoPromiseLists = videoPathList.map(
       ([folderPath, filePath], index) => {
         const videoPath = path.join(
-          TEMP_DIR_VIDEOS.FORDER,
+          TEMP_DIR_VIDEOS.FOLDER,
           `./${convertPath(folderPath)}/${filePath}`,
         );
         const framesFolderPath = path.join(
-          TEMP_DIR_FRAMES.FORDER,
+          TEMP_DIR_FRAMES.FOLDER,
           `./${convertPath(folderPath)}`,
         );
         const startTime = startPointList[index];
