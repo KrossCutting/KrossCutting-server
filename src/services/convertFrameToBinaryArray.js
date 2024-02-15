@@ -4,11 +4,10 @@ const sharp = require("sharp");
 const { TEMP_DIR_DIFFERENCE } = require("../constants/paths");
 
 async function convertFrameToBinaryArray(imageNumber) {
-  const mainFramePath = path.join(TEMP_DIR_DIFFERENCE.MAIN, `./difference_${imageNumber}.jpg`);
-  const subOneFramePath = path.join(TEMP_DIR_DIFFERENCE.SUB_ONE, `./difference_${imageNumber}.jpg`);
-  const subTwoFramePath = path.join(TEMP_DIR_DIFFERENCE.SUB_TWO, `./difference_${imageNumber}.jpg`);
+  const subOneFramePath = path.join(TEMP_DIR_DIFFERENCE.SUB_ONE, `difference_${imageNumber}.jpg`);
+  const subTwoFramePath = path.join(TEMP_DIR_DIFFERENCE.SUB_TWO, `difference_${imageNumber}.jpg`);
 
-  const pathList = [mainFramePath, subOneFramePath, subTwoFramePath].map(async (framePath) => {
+  const pathList = [subOneFramePath, subTwoFramePath].map(async (framePath) => {
     const { data, info } = await sharp(framePath)
       .raw()
       .toBuffer({ resolveWithObject: true });
