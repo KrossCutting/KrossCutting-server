@@ -9,6 +9,7 @@ const { TEMP_DIR_WAV, TEMP_DIR_WAV_CUT, TEMP_DIR_WAV_ADJUSTED } = require("../co
 async function adjustAudio(req, res, next) {
   try {
     const videoLabels = Object.keys(req.body.startPoints);
+    const videoTimes = Object.values(req.body.startPoints);
     const audioPaths = {};
 
     for (let i = 0; i < videoLabels.length; i += 1) {
@@ -96,7 +97,7 @@ async function adjustAudio(req, res, next) {
           throw new Error("given Video should be less than 3");
       }
 
-      labelInfo[videoLabel] = startTime;
+      labelInfo[videoLabel] = startTime + videoTimes[index];
     });
 
     res.locals.adjustedStartTimes = labelInfo;
