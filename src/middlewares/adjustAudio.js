@@ -1,19 +1,25 @@
 /* eslint-disable */
 const path = require("path");
+const progressStatus = require("../routes/progressStatus");
 const ensureDir = require("../util/ensureDir");
 const removeDir = require("../util/removeDir");
 const trimAudio = require("../services/trimAudio");
 const extractStartTime = require("../services/extractStartTime");
-const { TEMP_DIR_WAV, TEMP_DIR_WAV_CUT, TEMP_DIR_WAV_ADJUSTED } = require("../constants/paths");
+const {
+  TEMP_DIR_WAV,
+  TEMP_DIR_WAV_CUT,
+  TEMP_DIR_WAV_ADJUSTED,
+} = require("../constants/paths");
 
 async function adjustAudio(req, res, next) {
   try {
+    progressStatus.stage = "audios";
     const videoLabels = Object.keys(req.body.startPoints);
     const videoTimes = Object.values(req.body.startPoints);
     const audioPaths = {};
 
-    for (let i = 0; i < videoLabels.length; i += 1) {
-      const videoLabel = videoLabels[i];
+    for (let index = 0; index < videoLabels.length; index += 1) {
+      const videoLabel = videoLabels[index];
       const startPoint = req.body.startPoints[videoLabel];
 
       let inputPath = "";
@@ -24,18 +30,24 @@ async function adjustAudio(req, res, next) {
         continue;
       }
 
-      switch(videoLabel) {
+      switch (videoLabel) {
         case "mainStartPoint":
-          adjustedOutputPath = path.join(TEMP_DIR_WAV_ADJUSTED.MAIN, "main-audio.wav");
+          adjustedOutputPath = path.join(
+            TEMP_DIR_WAV_ADJUSTED.MAIN,
+            "main-audio.wav"
+          );
           inputPath = path.join(TEMP_DIR_WAV.MAIN, "main-audio.wav");
           outputPath = path.join(TEMP_DIR_WAV_CUT.MAIN, "main-audio.wav");
-          audioPaths.mainAudio = { outputPath, adjustedOutputPath};
+          audioPaths.mainAudio = { outputPath, adjustedOutputPath };
           await ensureDir(TEMP_DIR_WAV_CUT.MAIN);
           await ensureDir(TEMP_DIR_WAV_ADJUSTED.MAIN);
           break;
 
         case "subOneStartPoint":
-          adjustedOutputPath = path.join(TEMP_DIR_WAV_ADJUSTED.SUB_ONE, "sub-one-audio.wav")
+          adjustedOutputPath = path.join(
+            TEMP_DIR_WAV_ADJUSTED.SUB_ONE,
+            "sub-one-audio.wav"
+          );
           inputPath = path.join(TEMP_DIR_WAV.SUB_ONE, "sub-one-audio.wav");
           outputPath = path.join(TEMP_DIR_WAV_CUT.SUB_ONE, "sub-one-audio.wav");
           audioPaths.subOneAudio = { outputPath, adjustedOutputPath };
@@ -44,7 +56,10 @@ async function adjustAudio(req, res, next) {
           break;
 
         case "subTwoStartPoint":
-          adjustedOutputPath = path.join(TEMP_DIR_WAV_ADJUSTED.SUB_TWO, "sub-two-audio.wav")
+          adjustedOutputPath = path.join(
+            TEMP_DIR_WAV_ADJUSTED.SUB_TWO,
+            "sub-two-audio.wav"
+          );
           inputPath = path.join(TEMP_DIR_WAV.SUB_TWO, "sub-two-audio.wav");
           outputPath = path.join(TEMP_DIR_WAV_CUT.SUB_TWO, "sub-two-audio.wav");
           audioPaths.subTwoAudio = { outputPath, adjustedOutputPath };
@@ -60,12 +75,21 @@ async function adjustAudio(req, res, next) {
     }
 
     const audioLabels = Object.keys(audioPaths);
-    const audioList = Object.values(audioPaths).map((paths) => paths.outputPath);
+    const audioList = Object.values(audioPaths).map(
+      (paths) => paths.outputPath
+    );
     const adjustedStartTimes = await extractStartTime(audioList);
 
-    for (let i = 0; i < adjustedStartTimes.length; i += 1) {
-      const adjustedStartTime = adjustedStartTimes[i]
-      const currentAudioLabel = audioLabels[i];
+    if (adjustedStartTimes.length === videoLabels.length) {
+      res.status(201).send({
+        result: "success",
+        message: "verified",
+      });
+    }
+
+    for (let index = 0; index < adjustedStartTimes.length; index += 1) {
+      const adjustedStartTime = adjustedStartTimes[index];
+      const currentAudioLabel = audioLabels[index];
       const { outputPath, adjustedOutputPath } = audioPaths[currentAudioLabel];
 
       await trimAudio(outputPath, adjustedOutputPath, adjustedStartTime);
@@ -80,7 +104,7 @@ async function adjustAudio(req, res, next) {
     adjustedStartTimes.forEach((startTime, index) => {
       let videoLabel = "";
 
-      switch(index) {
+      switch (index) {
         case 0:
           videoLabel = "mainStartPoint";
           break;
