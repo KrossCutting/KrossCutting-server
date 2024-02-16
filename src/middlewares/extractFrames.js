@@ -1,5 +1,6 @@
 /* eslint-disable */
-const path = require("path")
+const path = require("path");
+const progressStatus = require("../routes/progressStatus");
 const ensureDir = require("../util/ensureDir");
 const removeDir = require("../util/removeDir");
 const extractFramesFromVideo = require("../services/extractFramesFromVideo");
@@ -7,16 +8,17 @@ const { TEMP_DIR_FRAMES, TEMP_DIR_VIDEOS } = require("../constants/paths");
 
 async function extractFrames(req, res, next) {
   try {
+    progressStatus.stage = "frames";
     const videoLabels = Object.keys(res.locals.adjustedStartTimes);
 
-    for (let i = 0; i < videoLabels.length; i += 1) {
-      const videoLabel = videoLabels[i];
+    for (let index = 0; index < videoLabels.length; index += 1) {
+      const videoLabel = videoLabels[index];
       const startTime = res.locals.adjustedStartTimes[videoLabel];
 
       let inputPath = "";
       let outputPath = "";
 
-      switch(videoLabel) {
+      switch (videoLabel) {
         case "mainStartPoint":
           inputPath = path.join(TEMP_DIR_VIDEOS.MAIN, "main-video.mp4");
           outputPath = TEMP_DIR_FRAMES.MAIN;
@@ -45,7 +47,7 @@ async function extractFrames(req, res, next) {
 
     res.locals.videoCount = videoLabels.length;
 
-    next()
+    next();
   } catch (err) {
     console.error(err);
 

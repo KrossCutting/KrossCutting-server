@@ -7,6 +7,7 @@ const analyzeDuration = require("../services/analyzeDuration");
 const detectSingleShots = require("../services/detectSingleShots");
 const detectFace = require("../services/detectFace");
 const detectMovement = require("../services/detectMovement");
+const progressStatus = require("../routes/progressStatus");
 
 const { TEMP_DIR_FRAMES } = require("../constants/paths");
 
@@ -19,6 +20,8 @@ async function findEditPoints(req, res, next) {
 
   let editPoints = {};
   const singleShots = {};
+
+  progressStatus.stage = "editpoints";
 
   for (let videoType = 0; videoType < folderList.length; videoType += 1) {
     const folderName = folderList[videoType];
