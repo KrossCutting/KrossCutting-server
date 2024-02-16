@@ -2,20 +2,21 @@ const parseImgPath = require("../util/parseImgPath");
 const getBlackPercent = require("../util/getBlackPercent");
 const filterFramesByTwoSubs = require("../util/filterFramesByTwoSubs");
 const convertFrameToBinaryArray = require("./convertFrameToBinaryArray");
+const mergeFrames = require("../util/mergeFrames");
 
 async function sortFrames(singleShots, editPoints) {
   const durationFrames = {};
   const subOneFrames = {};
   const subTwoFrames = {};
-  const labels = Object.keys(singleShots);
+  const [_, subOneFrameInfo, subTwoFrameInfo] = Object.keys(singleShots);
   const durationPaths = Object.keys(editPoints);
   const mainFrameNumbers = durationPaths.map(
     (framePath) => parseImgPath(framePath).frameNumber,
   );
-  const subOneFrameNumbers = singleShots[labels[1]].map(
+  const subOneFrameNumbers = singleShots[subOneFrameInfo].map(
     (framePath) => parseImgPath(framePath).frameNumber,
   );
-  const subTwoFrameNumbers = singleShots[labels[2]].map(
+  const subTwoFrameNumbers = singleShots[subTwoFrameInfo].map(
     (framePath) => parseImgPath(framePath).frameNumber,
   );
 
@@ -66,7 +67,10 @@ async function sortFrames(singleShots, editPoints) {
     subTwoFrames[frameNumber] = duration;
   });
 
-  return { subOneFrames, subTwoFrames };
+  const subOneMergedFrames = mergeFrames(subOneFrames);
+  const subTwoMergedFrames = mergeFrames(subTwoFrames);
+
+  return { subOneMergedFrames, subTwoMergedFrames };
 }
 
 module.exports = sortFrames;
