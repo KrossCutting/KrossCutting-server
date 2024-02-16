@@ -122,8 +122,6 @@ async function editFrames(mainImg, subImg, durationTime) {
       !mainFaceData.predictions.length || !subFaceData.predictions.length;
 
     if (isNotExistFaceImg) {
-      console.log("조회된 얼굴이 없습니다.");
-
       if (DISSOLVE_FRAME) {
         await Promise.all(
           applyDissolve(frameNumber, subVideoLabel, DISSOLVE_FRAME),
@@ -140,8 +138,6 @@ async function editFrames(mainImg, subImg, durationTime) {
     const imgMetadata = await sharp(mainImg).metadata();
 
     if (!isSamePositionFace(mainFaceCoord, subFaceCoord, imgMetadata)) {
-      console.log("같은 위치의 얼굴이 아닙니다.");
-
       if (DISSOLVE_FRAME) {
         await Promise.all(
           applyDissolve(frameNumber, subVideoLabel, DISSOLVE_FRAME),

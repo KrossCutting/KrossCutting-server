@@ -69,7 +69,7 @@ async function crossCutting(req, res, next) {
 
   await exportFinalVideo();
 
-  res.status(200).send("success");
+  res.status(200).send({ result: "success", message: "final video exported" });
 }
 
 module.exports = crossCutting;

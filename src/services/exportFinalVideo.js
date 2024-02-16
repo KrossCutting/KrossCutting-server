@@ -18,6 +18,7 @@ function exportFinalVideo() {
       TEMP_DIR_FRAMES.MAIN,
       "frame_30fps_%d.jpg",
     );
+    const SCALE = "1280: 720";
 
     ffmpeg()
       .input(inputVideoPattern)
@@ -27,7 +28,7 @@ function exportFinalVideo() {
       .videoCodec("libx264")
       .outputOptions([
         "-pix_fmt yuv420p",
-        "-vf scale=1280:720",
+        `-vf scale=${SCALE}`,
         "-crf 23",
         "-b:a 128k",
       ])
