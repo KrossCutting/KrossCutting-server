@@ -10,8 +10,8 @@ async function applyTransition(
   durationTime,
   extractArguments,
   imgMetadata,
+  DISSOLVE_FRAME,
 ) {
-  const DISSOLVE_FRAME = 4;
   const { frameNumber, videoLabel: subVideoLabel } = parseImgPath(subImgPath);
   const resizeFramePathList = new Array(durationTime * 30)
     .fill(0)
@@ -40,27 +40,11 @@ async function applyTransition(
 
   await Promise.all(resizePromiseList);
 
-  const dissolveStartList = new Array(DISSOLVE_FRAME)
-    .fill(0)
-    .map((_, index) => {
-      const mainFramePath = stringifyImgPath(
-        "main-contents",
-        frameNumber + index,
-      );
-      const subFramePath = stringifyImgPath(subVideoLabel, frameNumber + index);
-
-      return [mainFramePath, subFramePath];
-    });
-
-  const dissolveStartPromiseList = dissolveStartList.map(
-    async ([mainFramePath, subFramePath]) => {
-      await applyDissolve(mainFramePath, subFramePath);
-
-      return subFramePath;
-    },
-  );
-
-  await Promise.all(dissolveStartPromiseList);
+  if (DISSOLVE_FRAME) {
+    await Promise.all(
+      applyDissolve(frameNumber, subVideoLabel, DISSOLVE_FRAME),
+    );
+  }
 
   const replaceFramesPromiseList = resizeFramePathList.map(
     async ([mainFramePath, subFramePath]) => {

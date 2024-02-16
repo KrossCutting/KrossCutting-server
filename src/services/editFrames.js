@@ -1,5 +1,6 @@
 const sharp = require("sharp");
 
+const parseImgPath = require("../util/parseImgPath");
 const detectFace = require("./detectFace");
 const applyTransition = require("./applyTransition");
 const applyDissolve = require("./applyDissolve");
@@ -112,15 +113,21 @@ function isSamePositionFace(mainCoord, subCoord, imgMetadata) {
 
 async function editFrames(mainImg, subImg, durationTime) {
   try {
+    const DISSOLVE_FRAME = durationTime > 3 ? 2 : 0;
+
     const mainFaceData = await detectFace(mainImg);
     const subFaceData = await detectFace(subImg);
+    const { frameNumber, videoLabel: subVideoLabel } = parseImgPath(subImg);
     const isNotExistFaceImg =
       !mainFaceData.predictions.length || !subFaceData.predictions.length;
 
     if (isNotExistFaceImg) {
-      console.log("조회된 얼굴이 없습니다.");
+      if (DISSOLVE_FRAME) {
+        await Promise.all(
+          applyDissolve(frameNumber, subVideoLabel, DISSOLVE_FRAME),
+        );
+      }
 
-      await applyDissolve(mainImg, subImg);
       await Promise.all(replaceFrames(subImg, durationTime));
 
       return;
@@ -131,9 +138,12 @@ async function editFrames(mainImg, subImg, durationTime) {
     const imgMetadata = await sharp(mainImg).metadata();
 
     if (!isSamePositionFace(mainFaceCoord, subFaceCoord, imgMetadata)) {
-      console.log("같은 위치의 얼굴이 아닙니다.");
+      if (DISSOLVE_FRAME) {
+        await Promise.all(
+          applyDissolve(frameNumber, subVideoLabel, DISSOLVE_FRAME),
+        );
+      }
 
-      await applyDissolve(mainImg, subImg);
       await Promise.all(replaceFrames(subImg, durationTime));
 
       return;
@@ -145,7 +155,13 @@ async function editFrames(mainImg, subImg, durationTime) {
       imgMetadata,
     );
 
-    await applyTransition(subImg, durationTime, extractArguments, imgMetadata);
+    await applyTransition(
+      subImg,
+      durationTime,
+      extractArguments,
+      imgMetadata,
+      DISSOLVE_FRAME,
+    );
   } catch (faceDetectError) {
     console.error(`얼굴 좌표 연산 중 에러 발생 ${faceDetectError}`);
   }
