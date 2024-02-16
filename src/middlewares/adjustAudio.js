@@ -80,6 +80,9 @@ async function adjustAudio(req, res, next) {
     );
     const adjustedStartTimes = await extractStartTime(audioList);
 
+    //  To Do.현재 응답을 두 번 보내고 있어 해결해야합니다.
+    // 해결방안 1. 엔드 포인트 생성 => 오디오 유호성 검사
+    // 해결방안 2. 프로그래스 바에서 사용자에게 알림 (비추천)
     if (adjustedStartTimes.length === videoLabels.length) {
       res.status(201).send({
         result: "success",

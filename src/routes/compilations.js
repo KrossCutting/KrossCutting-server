@@ -2,11 +2,12 @@ const express = require("express");
 
 const router = express.Router();
 
+const progressStatus = require("./progressStatus");
+
 const adjustAudio = require("../middlewares/adjustAudio");
 const extractFrames = require("../middlewares/extractFrames");
 const findEditPoints = require("../middlewares/findEditPoints");
-
-const progressStatus = require("./progressStatus");
+const crossCuttingController = require("../controllers/crossCutting.controller");
 
 router.post(
   "/",
@@ -18,12 +19,7 @@ router.post(
   adjustAudio,
   extractFrames,
   findEditPoints,
-  // TODO. 아래 내용에 컨트롤러가 위치해야합니다.
-  // 컨트롤러 연결시 progressStatus.stage = "completed";가 들어가야 합니다.
-  /* (req, res, next) => {
-    progressStatus.stage = "completed";
-    next();
-  } */
+  crossCuttingController,
 );
 
 router.get("/", (req, res) => {
