@@ -1,10 +1,11 @@
+const removeDir = require("../util/removeDir");
 const sortFrames = require("../services/sortFrames");
 const editFrames = require("../services/editFrames");
 const stringifyImgPath = require("../util/stringifyImgPath");
 const exportFinalVideo = require("../services/exportFinalVideo");
 const getFinalVideoUrl = require("../services/getFinalVideoUrl");
 const progressStatus = require("../routes/progressStatus");
-const { TEMP_DIR_FRAMES } = require("../constants/paths");
+const { TEMP_DIR_FRAMES, TEMP_DIR } = require("../constants/paths");
 
 async function crossCutting(req, res, next) {
   const { singleShots } = res.locals;
@@ -60,6 +61,9 @@ async function crossCutting(req, res, next) {
     lastResult: "success",
     s3ClientFinalVideoUrl,
   });
+
+  // 실제 작업시 주석해제 필요
+  // removeDir(TEMP_DIR);
 }
 
 module.exports = crossCutting;
