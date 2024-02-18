@@ -11,7 +11,7 @@ const VIDEO_SCALE = "1920:1080";
 
 function exportFinalVideo() {
   return new Promise((resolve, reject) => {
-    const finalVideoPath = path.join(TEMP_DIR_VIDEOS.FOLDER, "finalVideo.mp4");
+    const finalVideoPath = path.join(TEMP_DIR_VIDEOS.FOLDER, "final-video.mp4");
     const finalAudioPath = path.join(
       TEMP_DIR_WAV_ADJUSTED.MAIN,
       "main-audio.wav",
