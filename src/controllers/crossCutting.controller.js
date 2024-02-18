@@ -2,6 +2,7 @@ const sortFrames = require("../services/sortFrames");
 const editFrames = require("../services/editFrames");
 const stringifyImgPath = require("../util/stringifyImgPath");
 const exportFinalVideo = require("../services/exportFinalVideo");
+const getFinalVideoUrl = require("../services/getFinalVideoUrl");
 const progressStatus = require("../routes/progressStatus");
 const { TEMP_DIR_FRAMES } = require("../constants/paths");
 
@@ -51,11 +52,13 @@ async function crossCutting(req, res, next) {
   }
 
   await exportFinalVideo(TEMP_DIR_FRAMES.MAIN);
-  progressStatus.stage = "completed";
 
+  const s3ClientFinalVideoUrl = await getFinalVideoUrl();
+
+  progressStatus.stage = "completed";
   res.status(200).send({
-    result: "success",
-    message: "final video is exported",
+    lastResult: "success",
+    s3ClientFinalVideoUrl,
   });
 }
 
