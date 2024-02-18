@@ -53,7 +53,10 @@ async function crossCutting(req, res, next) {
   await exportFinalVideo(TEMP_DIR_FRAMES.MAIN);
   progressStatus.stage = "completed";
 
-  res.status(200).send("success");
+  res.status(200).send({
+    result: "success",
+    message: "final video is exported",
+  });
 }
 
 module.exports = crossCutting;
