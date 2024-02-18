@@ -22,7 +22,17 @@ function extractStartTime(args) {
         reject();
         return;
       }
-      resolve(JSON.parse(result.trim()));
+      const times = JSON.parse(result.trim());
+      const minTime = Math.min(...times);
+
+      if (minTime < 0) {
+        times.forEach((_, index) => {
+          const difference = Math.abs(minTime);
+          times[index] += difference;
+        });
+      }
+
+      resolve(times);
     });
   });
 }

@@ -7,6 +7,8 @@ const {
   TEMP_DIR_VIDEOS,
 } = require("../constants/paths");
 
+const VIDEO_SCALE = "1920:1080";
+
 function exportFinalVideo() {
   return new Promise((resolve, reject) => {
     const finalVideoPath = path.join(TEMP_DIR_VIDEOS.FOLDER, "finalVideo.mp4");
@@ -18,7 +20,6 @@ function exportFinalVideo() {
       TEMP_DIR_FRAMES.MAIN,
       "frame_30fps_%d.jpg",
     );
-    const SCALE = "1280: 720";
 
     ffmpeg()
       .input(inputVideoPattern)
@@ -28,13 +29,11 @@ function exportFinalVideo() {
       .videoCodec("libx264")
       .outputOptions([
         "-pix_fmt yuv420p",
-        `-vf scale=${SCALE}`,
+        `-vf scale=${VIDEO_SCALE}`,
         "-crf 23",
         "-b:a 128k",
       ])
       .on("end", () => {
-        console.log("최종 비디오가 편집 완료되었습니다.");
-
         resolve();
       })
       .on("error", (err) => {
