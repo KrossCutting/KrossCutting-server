@@ -8,6 +8,7 @@ const progressStatus = require("../routes/progressStatus");
 const { TEMP_DIR_FRAMES, TEMP_DIR } = require("../constants/paths");
 
 async function crossCutting(req, res, next) {
+  progressStatus.stage = "editing";
   const { singleShots } = res.locals;
   const { editPoints } = res.locals;
   const { subOneMergedFrames, subTwoMergedFrames } = await sortFrames(
@@ -54,9 +55,10 @@ async function crossCutting(req, res, next) {
 
   await exportFinalVideo(TEMP_DIR_FRAMES.MAIN);
 
+  progressStatus.stage = "exporting";
+
   const s3ClientFinalVideoUrl = await getFinalVideoUrl();
 
-  progressStatus.stage = "completed";
   res.status(200).send({
     lastResult: "success",
     s3ClientFinalVideoUrl,
