@@ -59,7 +59,7 @@ async function crossCutting(req, res, next) {
 
   const s3ClientFinalVideoUrl = await getFinalVideoUrl();
 
-  res.status(200).send({
+  res.status(201).send({
     lastResult: "success",
     s3ClientFinalVideoUrl,
   });
