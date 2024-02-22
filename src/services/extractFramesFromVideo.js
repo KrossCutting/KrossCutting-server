@@ -8,7 +8,7 @@ async function extractFramesFromVideo(inputPath, framePath, startSecond) {
       "-i",
       inputPath,
       "-vf",
-      "fps=30, scale=1920x1080",
+      "fps=30",
       "-ss",
       startSecond,
       "-q:v",
