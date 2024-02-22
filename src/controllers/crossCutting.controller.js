@@ -1,11 +1,14 @@
+const removeDir = require("../util/removeDir");
 const sortFrames = require("../services/sortFrames");
 const editFrames = require("../services/editFrames");
 const stringifyImgPath = require("../util/stringifyImgPath");
 const exportFinalVideo = require("../services/exportFinalVideo");
+const getFinalVideoUrl = require("../services/getFinalVideoUrl");
 const progressStatus = require("../routes/progressStatus");
-const { TEMP_DIR_FRAMES } = require("../constants/paths");
+const { TEMP_DIR_FRAMES, TEMP_DIR } = require("../constants/paths");
 
 async function crossCutting(req, res, next) {
+  progressStatus.stage = "editing";
   const { singleShots } = res.locals;
   const { editPoints } = res.locals;
   const { subOneMergedFrames, subTwoMergedFrames } = await sortFrames(
@@ -51,12 +54,18 @@ async function crossCutting(req, res, next) {
   }
 
   await exportFinalVideo(TEMP_DIR_FRAMES.MAIN);
-  progressStatus.stage = "completed";
 
-  res.status(200).send({
-    result: "success",
-    message: "final video is exported",
+  progressStatus.stage = "exporting";
+
+  const s3ClientFinalVideoUrl = await getFinalVideoUrl();
+
+  res.status(201).send({
+    lastResult: "success",
+    s3ClientFinalVideoUrl,
   });
+
+  // 실제 작업시 주석해제 필요
+  // removeDir(TEMP_DIR);
 }
 
 module.exports = crossCutting;

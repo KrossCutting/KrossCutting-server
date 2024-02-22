@@ -1,35 +1,36 @@
 /* eslint-disable */
 const path = require("path");
-const progressStatus = require("../routes/progressStatus");
-const ensureDir = require("../util/ensureDir");
 const removeDir = require("../util/removeDir");
+const ensureDir = require("../util/ensureDir");
+const START_POINT = require("../constants/startPoints");
+const progressStatus = require("../routes/progressStatus");
 const extractFramesFromVideo = require("../services/extractFramesFromVideo");
 const { TEMP_DIR_FRAMES, TEMP_DIR_VIDEOS } = require("../constants/paths");
 
 async function extractFrames(req, res, next) {
   try {
     progressStatus.stage = "frames";
-    const videoLabels = Object.keys(res.locals.adjustedStartTimes);
+    const videoLabels = Object.keys(req.body);
 
     for (let index = 0; index < videoLabels.length; index += 1) {
       const videoLabel = videoLabels[index];
-      const startTime = res.locals.adjustedStartTimes[videoLabel];
+      const startTime = req.body[videoLabel];
 
       let inputPath = "";
       let outputPath = "";
 
       switch (videoLabel) {
-        case "mainStartPoint":
+        case START_POINT.MAIN:
           inputPath = path.join(TEMP_DIR_VIDEOS.MAIN, "main-video.mp4");
           outputPath = TEMP_DIR_FRAMES.MAIN;
           break;
 
-        case "subOneStartPoint":
+        case START_POINT.SUB_ONE:
           inputPath = path.join(TEMP_DIR_VIDEOS.SUB_ONE, "sub-one-video.mp4");
           outputPath = TEMP_DIR_FRAMES.SUB_ONE;
           break;
 
-        case "subTwoStartPoint":
+        case START_POINT.SUB_TWO:
           inputPath = path.join(TEMP_DIR_VIDEOS.SUB_TWO, "sub-two-video.mp4");
           outputPath = TEMP_DIR_FRAMES.SUB_TWO;
           break;
@@ -43,7 +44,9 @@ async function extractFrames(req, res, next) {
     }
 
     //To Do 실제 작업을 위한 removeDir 적용 필요
-    // removeDir(TEMP_DIR_VIDEOS.FOLDER);
+    // removeDir(TEMP_DIR_VIDEOS.MAIN);
+    // removeDir(TEMP_DIR_VIDEOS.SUB_ONE);
+    // removeDir(TEMP_DIR_VIDEOS.SUB_TWO);
 
     res.locals.videoCount = videoLabels.length;
 

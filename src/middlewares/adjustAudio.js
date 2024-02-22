@@ -1,9 +1,10 @@
 /* eslint-disable */
 const path = require("path");
-const progressStatus = require("../routes/progressStatus");
 const ensureDir = require("../util/ensureDir");
 const removeDir = require("../util/removeDir");
 const trimAudio = require("../services/trimAudio");
+const START_POINT = require("../constants/startPoints");
+const progressStatus = require("../routes/progressStatus");
 const extractStartTime = require("../services/extractStartTime");
 const {
   TEMP_DIR_WAV,
@@ -31,7 +32,7 @@ async function adjustAudio(req, res, next) {
       }
 
       switch (videoLabel) {
-        case "mainStartPoint":
+        case START_POINT.MAIN:
           adjustedOutputPath = path.join(
             TEMP_DIR_WAV_ADJUSTED.MAIN,
             "main-audio.wav"
@@ -43,7 +44,7 @@ async function adjustAudio(req, res, next) {
           await ensureDir(TEMP_DIR_WAV_ADJUSTED.MAIN);
           break;
 
-        case "subOneStartPoint":
+        case START_POINT.SUB_ONE:
           adjustedOutputPath = path.join(
             TEMP_DIR_WAV_ADJUSTED.SUB_ONE,
             "sub-one-audio.wav"
@@ -55,7 +56,7 @@ async function adjustAudio(req, res, next) {
           await ensureDir(TEMP_DIR_WAV_ADJUSTED.SUB_ONE);
           break;
 
-        case "subTwoStartPoint":
+        case START_POINT.SUB_TWO:
           adjustedOutputPath = path.join(
             TEMP_DIR_WAV_ADJUSTED.SUB_TWO,
             "sub-two-audio.wav"
@@ -80,16 +81,6 @@ async function adjustAudio(req, res, next) {
     );
     const adjustedStartTimes = await extractStartTime(audioList);
 
-    //  To Do.현재 응답을 두 번 보내고 있어 해결해야합니다.
-    // 해결방안 1. 엔드 포인트 생성 => 오디오 유호성 검사
-    // 해결방안 2. 프로그래스 바에서 사용자에게 알림 (비추천)
-    if (adjustedStartTimes.length === videoLabels.length) {
-      res.status(201).send({
-        result: "success",
-        message: "verified",
-      });
-    }
-
     for (let index = 0; index < adjustedStartTimes.length; index += 1) {
       const adjustedStartTime = adjustedStartTimes[index];
       const currentAudioLabel = audioLabels[index];
@@ -109,15 +100,15 @@ async function adjustAudio(req, res, next) {
 
       switch (index) {
         case 0:
-          videoLabel = "mainStartPoint";
+          videoLabel = START_POINT.MAIN;
           break;
 
         case 1:
-          videoLabel = "subOneStartPoint";
+          videoLabel = START_POINT.SUB_ONE;
           break;
 
         case 2:
-          videoLabel = "subTwoStartPoint";
+          videoLabel = START_POINT.SUB_TWO;
           break;
 
         default:
@@ -127,9 +118,10 @@ async function adjustAudio(req, res, next) {
       labelInfo[videoLabel] = startTime + videoTimes[index];
     });
 
-    res.locals.adjustedStartTimes = labelInfo;
-
-    next();
+    res.status(200).send({
+      result: "success",
+      labelInfo,
+    });
   } catch (err) {
     console.error(err);
 
