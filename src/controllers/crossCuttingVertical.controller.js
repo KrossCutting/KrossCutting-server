@@ -1,27 +1,25 @@
 const removeDir = require("../util/removeDir");
-const sortFrames = require("../services/sortFrames");
 const editFrames = require("../services/editFrames");
+const progressStatus = require("../routes/progressStatus");
 const stringifyImgPath = require("../util/stringifyImgPath");
 const exportFinalVideo = require("../services/exportFinalVideo");
 const getFinalVideoUrl = require("../services/getFinalVideoUrl");
-const progressStatus = require("../routes/progressStatus");
+const assignEditPoints = require("../services/assignEditPoints");
 const { TEMP_DIR_FRAMES, TEMP_DIR } = require("../constants/paths");
 
-async function crossCutting(req, res, next) {
+async function crossCuttingVertical(req, res, next) {
   progressStatus.stage = "editing";
-  const { isVertical } = req.body;
   const { selectedEditPoints } = req.body;
-  const { singleShots } = res.locals;
   const { editPoints } = res.locals;
 
-  const { subOneMergedFrames, subTwoMergedFrames } = await sortFrames(
-    singleShots,
+  const { subOneFrames, subTwoFrames } = assignEditPoints(
     editPoints,
+    selectedEditPoints,
   );
 
-  if (subOneMergedFrames && subTwoMergedFrames) {
-    const subOneFrameList = Object.entries(subOneMergedFrames);
-    const subTwoFrameList = Object.entries(subTwoMergedFrames);
+  if (subOneFrames && subTwoFrames) {
+    const subOneFrameList = Object.entries(subOneFrames);
+    const subTwoFrameList = Object.entries(subTwoFrames);
 
     if (subOneFrameList.length) {
       const subOnePromiseList = subOneFrameList.map(
@@ -71,4 +69,4 @@ async function crossCutting(req, res, next) {
   // removeDir(TEMP_DIR);
 }
 
-module.exports = crossCutting;
+module.exports = crossCuttingVertical;

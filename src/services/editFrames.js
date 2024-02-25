@@ -113,7 +113,7 @@ function isSamePositionFace(mainCoord, subCoord, imgMetadata) {
 
 async function editFrames(mainImg, subImg, durationTime) {
   try {
-    const DISSOLVE_FRAME = durationTime > 3 ? 2 : 0;
+    const DISSOLVE_FRAME = 0;
 
     const mainFaceData = await detectFace(mainImg);
     const subFaceData = await detectFace(subImg);

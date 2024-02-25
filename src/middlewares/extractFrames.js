@@ -10,28 +10,32 @@ const { TEMP_DIR_FRAMES, TEMP_DIR_VIDEOS } = require("../constants/paths");
 async function extractFrames(req, res, next) {
   try {
     progressStatus.stage = "frames";
-    const videoLabels = Object.keys(req.body);
+    const isApp = res.locals?.isApp;
+    // 시연 후 수정 필요
+    const videoLabels = isApp ? Object.keys(res.locals.labelInfo) :  Object.keys(req.body);
 
     for (let index = 0; index < videoLabels.length; index += 1) {
       const videoLabel = videoLabels[index];
-      const startTime = req.body[videoLabel];
+      // 시연 후 수정 필요
+      const startTime = isApp ? res.locals.labelInfo[videoLabel] : req.body[videoLabel];
+      const fileExtension = isApp ? ".MOV" : ".mp4";
 
       let inputPath = "";
       let outputPath = "";
 
       switch (videoLabel) {
         case START_POINT.MAIN:
-          inputPath = path.join(TEMP_DIR_VIDEOS.MAIN, "main-video.mp4");
+          inputPath = path.join(TEMP_DIR_VIDEOS.MAIN, `main-video${fileExtension}`);
           outputPath = TEMP_DIR_FRAMES.MAIN;
           break;
 
         case START_POINT.SUB_ONE:
-          inputPath = path.join(TEMP_DIR_VIDEOS.SUB_ONE, "sub-one-video.mp4");
+          inputPath = path.join(TEMP_DIR_VIDEOS.SUB_ONE, `sub-one-video${fileExtension}`);
           outputPath = TEMP_DIR_FRAMES.SUB_ONE;
           break;
 
         case START_POINT.SUB_TWO:
-          inputPath = path.join(TEMP_DIR_VIDEOS.SUB_TWO, "sub-two-video.mp4");
+          inputPath = path.join(TEMP_DIR_VIDEOS.SUB_TWO, `sub-two-video${fileExtension}`);
           outputPath = TEMP_DIR_FRAMES.SUB_TWO;
           break;
 

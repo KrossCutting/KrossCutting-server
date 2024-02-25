@@ -12,6 +12,7 @@ const progressStatus = require("../routes/progressStatus");
 const { TEMP_DIR_FRAMES } = require("../constants/paths");
 
 async function findVerticalEditPoints(req, res, next) {
+  progressStatus.stage = "editPoints";
   const { videoCount } = res.locals;
   const folderList =
     videoCount === 2
@@ -20,8 +21,6 @@ async function findVerticalEditPoints(req, res, next) {
 
   let editPoints = {};
   const singleShots = {};
-
-  progressStatus.stage = "editpoints";
 
   for (let videoType = 0; videoType < folderList.length; videoType += 1) {
     const folderName = folderList[videoType];

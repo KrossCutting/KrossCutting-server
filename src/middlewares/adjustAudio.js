@@ -118,7 +118,15 @@ async function adjustAudio(req, res, next) {
       labelInfo[videoLabel] = startTime + videoTimes[index];
     });
 
-    res.status(200).send({
+    if (req.body.selectedEditPoints !== undefined) {
+      res.locals.labelInfo = labelInfo;
+      res.locals.isApp = true;
+      next();
+
+      return;
+    }
+
+    res.status(201).send({
       result: "success",
       labelInfo,
     });

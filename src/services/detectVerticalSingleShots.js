@@ -25,8 +25,6 @@ function detectVerticalSingleShots(movementRatioList) {
     }
   }
 
-  console.log("singleShot list is extracted successfully");
-
   return [singleShotList, nonSelectedFramesMovementAvg];
 }
 
