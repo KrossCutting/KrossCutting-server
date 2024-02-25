@@ -1,8 +1,8 @@
 /* eslint-disable */
-const distributeFrames = require("../services/distributeFrames");
+const distributeFramesEvenly = require("./distributeFramesEvenly");
 
 function assignEditPoints(editPoints, selectedEditPoints) {
-  const { subOneFrames, subTwoFrames } = distributeFrames(editPoints)
+  const { subOneFrames, subTwoFrames } = distributeFramesEvenly(editPoints)
 
   const mainEditPointList = selectedEditPoints.mainEditPoint
   const subOneEditPointList = selectedEditPoints.subOneEditPoint;

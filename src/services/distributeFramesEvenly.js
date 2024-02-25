@@ -1,7 +1,7 @@
 /* eslint-disable */
 const parseImgPath = require("../util/parseImgPath");
 
-function distributeFrames(editPoints) {
+function distributeFramesEvenly(editPoints) {
   const subOneFrames = {};
   const subTwoFrames = {};
   const framePaths = Object.keys(editPoints);
@@ -22,4 +22,4 @@ function distributeFrames(editPoints) {
   return { subOneFrames, subTwoFrames };
 }
 
-module.exports = distributeFrames;
+module.exports = distributeFramesEvenly;

@@ -8,7 +8,6 @@ const assignEditPoints = require("../services/assignEditPoints");
 const { TEMP_DIR_FRAMES, TEMP_DIR } = require("../constants/paths");
 
 async function crossCuttingVertical(req, res, next) {
-  console.log("비디오 편집 시작");
   progressStatus.stage = "editing";
   const { selectedEditPoints } = req.body;
   const { editPoints } = res.locals;
@@ -60,9 +59,6 @@ async function crossCuttingVertical(req, res, next) {
   progressStatus.stage = "exporting";
 
   const s3ClientFinalVideoUrl = await getFinalVideoUrl();
-
-  console.log(s3ClientFinalVideoUrl);
-  console.log("비디오 추출 완료");
 
   res.status(201).send({
     lastResult: "success",
