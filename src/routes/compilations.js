@@ -9,7 +9,6 @@ const extractFrames = require("../middlewares/extractFrames");
 const findEditPoints = require("../middlewares/findEditPoints");
 const findVerticalEditPoints = require("../middlewares/findVerticalEditPoints");
 const crossCuttingController = require("../controllers/crossCutting.controller");
-const crossCuttingVerticalController = require("../controllers/crossCuttingVertical.controller");
 
 router.post("/", extractFrames, findEditPoints, crossCuttingController);
 
@@ -18,7 +17,7 @@ router.post(
   adjustAudio,
   extractFrames,
   findVerticalEditPoints,
-  crossCuttingVerticalController,
+  crossCuttingController,
 );
 
 router.get("/", (req, res) => {

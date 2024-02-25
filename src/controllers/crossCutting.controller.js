@@ -6,18 +6,18 @@ const exportFinalVideo = require("../services/exportFinalVideo");
 const getFinalVideoUrl = require("../services/getFinalVideoUrl");
 const progressStatus = require("../routes/progressStatus");
 const { TEMP_DIR_FRAMES, TEMP_DIR } = require("../constants/paths");
+const assignEditPoints = require("../services/assignEditPoints");
 
 async function crossCutting(req, res, next) {
   progressStatus.stage = "editing";
-  const { isVertical } = req.body;
   const { selectedEditPoints } = req.body;
   const { singleShots } = res.locals;
   const { editPoints } = res.locals;
 
-  const { subOneMergedFrames, subTwoMergedFrames } = await sortFrames(
-    singleShots,
-    editPoints,
-  );
+  const { subOneMergedFrames, subTwoMergedFrames } =
+    selectedEditPoints === undefined
+      ? await sortFrames(singleShots, editPoints)
+      : assignEditPoints(editPoints, selectedEditPoints);
 
   if (subOneMergedFrames && subTwoMergedFrames) {
     const subOneFrameList = Object.entries(subOneMergedFrames);
@@ -61,6 +61,8 @@ async function crossCutting(req, res, next) {
   progressStatus.stage = "exporting";
 
   const s3ClientFinalVideoUrl = await getFinalVideoUrl();
+
+  progressStatus.stage = "complete";
 
   res.status(201).send({
     lastResult: "success",

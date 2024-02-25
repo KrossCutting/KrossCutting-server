@@ -1,5 +1,6 @@
 /* eslint-disable */
 const distributeFramesEvenly = require("./distributeFramesEvenly");
+const mergeFrames = require("../util/mergeFrames");
 
 function assignEditPoints(editPoints, selectedEditPoints) {
   const { subOneFrames, subTwoFrames } = distributeFramesEvenly(editPoints)
@@ -38,7 +39,10 @@ function assignEditPoints(editPoints, selectedEditPoints) {
     }
   });
 
-  return { subOneFrames, subTwoFrames };
+  const subOneMergedFrames = mergeFrames(subOneFrames);
+  const subTwoMergedFrames = mergeFrames(subTwoFrames);
+
+  return { subOneMergedFrames, subTwoMergedFrames };
 }
 
 module.exports = assignEditPoints;
