@@ -1,12 +1,12 @@
 const removeDir = require("../util/removeDir");
 const sortFrames = require("../services/sortFrames");
 const editFrames = require("../services/editFrames");
+const progressStatus = require("../routes/progressStatus");
 const stringifyImgPath = require("../util/stringifyImgPath");
 const exportFinalVideo = require("../services/exportFinalVideo");
 const getFinalVideoUrl = require("../services/getFinalVideoUrl");
-const progressStatus = require("../routes/progressStatus");
-const { TEMP_DIR_FRAMES, TEMP_DIR } = require("../constants/paths");
 const assignEditPoints = require("../services/assignEditPoints");
+const { TEMP_DIR_FRAMES, TEMP_DIR } = require("../constants/paths");
 
 async function crossCutting(req, res, next) {
   progressStatus.stage = "editing";
