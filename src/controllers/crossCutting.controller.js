@@ -11,13 +11,14 @@ const { TEMP_DIR_FRAMES, TEMP_DIR } = require("../constants/paths");
 async function crossCutting(req, res, next) {
   progressStatus.stage = "editing";
   const { selectedEditPoints } = req.body;
+  const { labelInfo } = res.locals;
   const { singleShots } = res.locals;
   const { editPoints } = res.locals;
 
   const { subOneMergedFrames, subTwoMergedFrames } =
     selectedEditPoints === undefined
       ? await sortFrames(singleShots, editPoints)
-      : assignEditPoints(editPoints, selectedEditPoints);
+      : assignEditPoints(editPoints, selectedEditPoints, labelInfo);
 
   if (subOneMergedFrames && subTwoMergedFrames) {
     const subOneFrameList = Object.entries(subOneMergedFrames);
@@ -70,7 +71,7 @@ async function crossCutting(req, res, next) {
   });
 
   // 실제 작업시 주석해제 필요
-  // removeDir(TEMP_DIR);
+  removeDir(TEMP_DIR);
 }
 
 module.exports = crossCutting;

@@ -90,8 +90,8 @@ async function adjustAudio(req, res, next) {
     }
 
     // To Do. 실제 작업시 주석해제 필요
-    // removeDir(TEMP_DIR_WAV.FOLDER);
-    // removeDir(TEMP_DIR_WAV_CUT.FOLDER);
+    removeDir(TEMP_DIR_WAV.FOLDER);
+    removeDir(TEMP_DIR_WAV_CUT.FOLDER);
 
     const labelInfo = {};
 

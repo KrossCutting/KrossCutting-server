@@ -11,7 +11,6 @@ async function extractFrames(req, res, next) {
   try {
     progressStatus.stage = "frames";
     const isApp = res.locals?.isApp;
-    // 시연 후 수정 필요
     const videoLabels = isApp ? Object.keys(res.locals.labelInfo) :  Object.keys(req.body);
 
     for (let index = 0; index < videoLabels.length; index += 1) {
@@ -48,9 +47,9 @@ async function extractFrames(req, res, next) {
     }
 
     //To Do 실제 작업을 위한 removeDir 적용 필요
-    // removeDir(TEMP_DIR_VIDEOS.MAIN);
-    // removeDir(TEMP_DIR_VIDEOS.SUB_ONE);
-    // removeDir(TEMP_DIR_VIDEOS.SUB_TWO);
+    removeDir(TEMP_DIR_VIDEOS.MAIN);
+    removeDir(TEMP_DIR_VIDEOS.SUB_ONE);
+    removeDir(TEMP_DIR_VIDEOS.SUB_TWO);
 
     res.locals.videoCount = videoLabels.length;
 
