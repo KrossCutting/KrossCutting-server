@@ -8,7 +8,7 @@ function connectServer(app) {
   app.use(express.urlencoded({ extended: false }));
   app.use(
     cors({
-      origin: [process.env.CLIENT_HOST, process.env.SERVER_HOST],
+      origin: [process.env.CLIENT_HOST],
       methods: "GET, POST",
       credentials: true,
       preflightContinue: true,
