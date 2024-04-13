@@ -14,6 +14,8 @@ module.exports = {
   coverageDirectory: "coverage",
   coveragePathIgnorePatterns: [
     "/node_modules/",
+    "/src/middlewares/adjustAudio.js",
+    "/src/middlewares/extractFrames.js",
     "/src/services/detectFace.js",
     "/src/services/exportFinalVideo.js",
     "/src/services/extractFramesFromVideo.js",
