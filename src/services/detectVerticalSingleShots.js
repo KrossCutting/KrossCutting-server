@@ -3,7 +3,11 @@ function detectVerticalSingleShots(movementRatioList) {
     return frameMovementInfo.movementRatio;
   });
 
-  const normalizedMovementRatioList = movementRatioFrames.slice(0, -10);
+  const normalizedMovementRatioList =
+    movementRatioFrames.length > 10
+      ? movementRatioFrames.slice(0, -10)
+      : movementRatioFrames;
+
   const movementRatioAvg =
     normalizedMovementRatioList.reduce((acc, cur) => acc + cur, 0) /
     normalizedMovementRatioList.length;
