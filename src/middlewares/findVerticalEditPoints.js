@@ -12,7 +12,7 @@ const progressStatus = require("../routes/progressStatus");
 const { TEMP_DIR_FRAMES } = require("../constants/paths");
 
 async function findVerticalEditPoints(req, res, next) {
-  progressStatus.stage = "editPoints";
+  progressStatus.stage = "singleShot";
   const { videoCount } = res.locals;
   const folderList =
     videoCount === 2
