@@ -1,6 +1,6 @@
+const fs = require("fs").promises;
 const tf = require("@tensorflow/tfjs-node");
 const blazeface = require("@tensorflow-models/blazeface");
-const fs = require("fs").promises;
 
 let faceDetectionModel = null;
 
