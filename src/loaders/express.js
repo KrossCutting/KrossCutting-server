@@ -10,7 +10,6 @@ function connectServer(app) {
     cors({
       origin: [process.env.CLIENT_HOST],
       methods: "GET, POST",
-      credentials: true,
       preflightContinue: true,
     }),
   );
