@@ -1,12 +1,13 @@
 const path = require("path");
 const { spawn } = require("child_process");
 
+const pythonPath = "/usr/bin/python3";
 const PYTHON_SCRIPT_PATH = path.join(__dirname, "./python/findAudioStart.py");
+console.log(PYTHON_SCRIPT_PATH);
 
 function extractStartTime(args) {
   return new Promise((resolve, reject) => {
-    const pythonProcess = spawn("python3", [PYTHON_SCRIPT_PATH, ...args]);
-
+    const pythonProcess = spawn(pythonPath, [PYTHON_SCRIPT_PATH, ...args]);
     let result = "";
 
     pythonProcess.stdout.on("data", (data) => {
@@ -14,7 +15,8 @@ function extractStartTime(args) {
     });
 
     pythonProcess.stderr.on("data", (data) => {
-      reject();
+      console.error(`stderr: ${data.toString()}`);
+      reject(new Error(data.toString()));
     });
 
     pythonProcess.on("close", (code) => {

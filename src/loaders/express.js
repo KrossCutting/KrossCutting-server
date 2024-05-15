@@ -9,7 +9,8 @@ function connectServer(app) {
   app.use(
     cors({
       origin: [process.env.CLIENT_HOST],
-      methods: "GET, POST",
+      methods: "GET, HEAD, PUT, POST, DELETE, OPTIONS",
+      allowedHeaders: "Content-Type, Authorization",
       preflightContinue: true,
     }),
   );

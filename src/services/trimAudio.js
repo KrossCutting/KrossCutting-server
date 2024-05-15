@@ -1,4 +1,7 @@
 const { spawn } = require("child_process");
+const ffmpeg = require("@ffmpeg-installer/ffmpeg");
+
+const ffmpegPath = ffmpeg.path;
 
 function trimAudio(inputPath, outputPath, startTime) {
   return new Promise((resolve, reject) => {
@@ -12,7 +15,7 @@ function trimAudio(inputPath, outputPath, startTime) {
       outputPath,
     ];
 
-    const ffmpegProcess = spawn("ffmpeg", ffmpegArgs);
+    const ffmpegProcess = spawn(ffmpegPath, ffmpegArgs);
 
     ffmpegProcess.on("close", (code) => {
       if (code === 0) {

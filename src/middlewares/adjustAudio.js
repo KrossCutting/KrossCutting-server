@@ -14,6 +14,8 @@ const {
 
 async function adjustAudio(req, res, next) {
   try {
+    console.log("adjustAudio 시작");
+
     progressStatus.stage = "audios";
     const videoLabels = Object.keys(req.body.startPoints);
     const videoTimes = Object.values(req.body.startPoints);
@@ -72,6 +74,14 @@ async function adjustAudio(req, res, next) {
           throw new Error(`Unknown VideoLabel: ${videoLabel}`);
       }
 
+      console.log(
+        "inputPath",
+        inputPath,
+        "outputPath",
+        outputPath,
+        "startPoint",
+        startPoint
+      );
       await trimAudio(inputPath, outputPath, startPoint);
     }
 
@@ -80,13 +90,21 @@ async function adjustAudio(req, res, next) {
       (paths) => paths.outputPath
     );
     const adjustedStartTimes = await extractStartTime(audioList);
+    console.log("adjustedStartTimes", adjustedStartTimes);
 
     for (let index = 0; index < adjustedStartTimes.length; index += 1) {
       const adjustedStartTime = adjustedStartTimes[index];
       const currentAudioLabel = audioLabels[index];
       const { outputPath, adjustedOutputPath } = audioPaths[currentAudioLabel];
 
+      console.log(
+        "trimAudio start!",
+        outputPath,
+        adjustedOutputPath,
+        adjustedStartTime
+      );
       await trimAudio(outputPath, adjustedOutputPath, adjustedStartTime);
+      console.log("trimAudio end!");
     }
 
     // To Do. 실제 작업시 주석해제 필요
@@ -116,9 +134,11 @@ async function adjustAudio(req, res, next) {
       }
 
       labelInfo[videoLabel] = startTime + videoTimes[index];
+      console.log("labelInfo", labelInfo);
     });
 
     if (req.body.selectedEditPoints !== undefined) {
+      console.log("selectedEditPoints exist!");
       res.locals.labelInfo = labelInfo;
       res.locals.isApp = true;
       next();
@@ -126,12 +146,14 @@ async function adjustAudio(req, res, next) {
       return;
     }
 
+    console.log("adjustAudio success!!");
+
     res.status(201).send({
       result: "success",
       labelInfo,
     });
   } catch (err) {
-    console.error(err);
+    console.error("adjustAudio 오류:", err);
 
     res.status(500).send("fail");
   }

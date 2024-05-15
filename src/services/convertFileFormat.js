@@ -1,8 +1,11 @@
 const { spawn } = require("child_process");
+const ffmpeg = require("@ffmpeg-installer/ffmpeg");
+
+const ffmpegPath = ffmpeg.path;
 
 function convertVideoFormat(inputFilePath, outputFilePath) {
   return new Promise((resolve, reject) => {
-    const ffmpegVideo = spawn("ffmpeg", [
+    const ffmpegVideo = spawn(ffmpegPath, [
       "-i",
       inputFilePath,
       "-c:v",

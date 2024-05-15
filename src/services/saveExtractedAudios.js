@@ -1,5 +1,9 @@
 const path = require("path");
 const { spawn } = require("child_process");
+const ffmpeg = require("@ffmpeg-installer/ffmpeg");
+
+const ffmpegPath = ffmpeg.path;
+
 const ensureDir = require("../util/ensureDir");
 const { TEMP_DIR_WAV } = require("../constants/paths");
 
@@ -17,9 +21,9 @@ function extractAudios(inputPath, outputPath) {
       "pcm_s16le",
       outputPath,
     ];
-    const ffmpeg = spawn("ffmpeg", args);
+    const ffmpegResult = spawn(ffmpegPath, args);
 
-    ffmpeg.on("close", (code) => {
+    ffmpegResult.on("close", (code) => {
       if (code === 0) {
         resolve(outputPath);
       } else {
