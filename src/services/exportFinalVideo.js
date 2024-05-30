@@ -1,5 +1,8 @@
+const { spawn } = require("child_process");
 const path = require("path");
-const ffmpeg = require("fluent-ffmpeg");
+const ffmpeg = require("@ffmpeg-installer/ffmpeg");
+
+const ffmpegPath = ffmpeg.path;
 
 const {
   TEMP_DIR_FRAMES,
@@ -21,27 +24,42 @@ function exportFinalVideo() {
       "frame_30fps_%d.jpg",
     );
 
-    ffmpeg()
-      .input(inputVideoPattern)
-      .inputFPS(30)
-      .inputFormat("image2")
-      .input(finalAudioPath)
-      .videoCodec("libx264")
-      .outputOptions([
-        "-pix_fmt yuv420p",
-        `-vf scale=${VIDEO_SCALE}`,
-        "-crf 23",
-        "-b:a 128k",
-      ])
-      .on("end", () => {
-        resolve();
-      })
-      .on("error", (err) => {
-        console.error(`에러발생 ${err}`);
+    const ffmpegProcess = spawn(ffmpegPath, [
+      "-y",
+      "-framerate",
+      "30",
+      "-i",
+      inputVideoPattern,
+      "-i",
+      finalAudioPath,
+      "-c:v",
+      "libx264",
+      "-pix_fmt",
+      "yuv420p",
+      "-vf",
+      `scale=${VIDEO_SCALE}`,
+      "-crf",
+      "23",
+      "-b:a",
+      "128k",
+      finalVideoPath,
+    ]);
 
-        reject();
-      })
-      .save(finalVideoPath);
+    ffmpegProcess.stdout.on("data", (data) => {
+      console.log(`stdout: ${data}`);
+    });
+
+    ffmpegProcess.stderr.on("data", (data) => {
+      console.error(`stderr: ${data}`);
+    });
+
+    ffmpegProcess.on("close", (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`ffmpeg process exited with code ${code}`));
+      }
+    });
   });
 }
 
